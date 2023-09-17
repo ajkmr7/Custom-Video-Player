@@ -1,5 +1,5 @@
 import XCTest
-import Custom-Video-Player
+import Custom_Video_Player_Example
 
 class Tests: XCTestCase {
     

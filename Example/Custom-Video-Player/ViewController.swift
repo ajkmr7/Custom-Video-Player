@@ -1,24 +1,35 @@
-//
-//  ViewController.swift
-//  Custom-Video-Player
-//
-//  Created by Ajay Kumar on 09/17/2023.
-//  Copyright (c) 2023 Ajay Kumar. All rights reserved.
-//
-
 import UIKit
+import SnapKit
+import Custom_Video_Player
 
 class ViewController: UIViewController {
+    
+    let playButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Play Video", for: .normal)
+        button.backgroundColor = .blue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 8
+        button.addTarget(self, action: #selector(navigatoToVideoPlayer), for: .touchUpInside)
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        view.backgroundColor = .white
+
+        view.addSubview(playButton)
+    
+        playButton.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalTo(100)
+            make.height.equalTo(34)
+        }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @objc private func navigatoToVideoPlayer() {
+        let videoPlayerVC = VideoPlayerViewController(videoURL: URL(string: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8")!)
+        navigationController?.pushViewController(videoPlayerVC, animated: true)
     }
-
 }
 

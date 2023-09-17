@@ -1,29 +1,16 @@
-# Custom-Video-Player
+# Custom Video Player
 
-[![CI Status](https://img.shields.io/travis/Ajay Kumar/Custom-Video-Player.svg?style=flat)](https://travis-ci.org/Ajay Kumar/Custom-Video-Player)
-[![Version](https://img.shields.io/cocoapods/v/Custom-Video-Player.svg?style=flat)](https://cocoapods.org/pods/Custom-Video-Player)
-[![License](https://img.shields.io/cocoapods/l/Custom-Video-Player.svg?style=flat)](https://cocoapods.org/pods/Custom-Video-Player)
-[![Platform](https://img.shields.io/cocoapods/p/Custom-Video-Player.svg?style=flat)](https://cocoapods.org/pods/Custom-Video-Player)
+A custom video player with subtitle selection support for iOS as of now.
 
-## Example
+## Features
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+- Subtitle selection mechanism.
+- Plans to implement various video player features in the future.
 
-## Requirements
+## Getting Started
 
-## Installation
+To use this custom video player in your iOS project, follow these steps:
 
-Custom-Video-Player is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
-
-```ruby
-pod 'Custom-Video-Player'
-```
-
-## Author
-
-Ajay Kumar, ajay.kumar2@thoughtworks.com
-
-## License
-
-Custom-Video-Player is available under the MIT license. See the LICENSE file for more info.
+1. Clone this repository.
+2. `cd Example` && `pod install`
+3. Run the **Custom-Video-Player.xcworkspace**
