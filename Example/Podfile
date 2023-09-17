@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '10.0'
+
+target 'Custom-Video-Player_Example' do
+  pod 'Custom-Video-Player', :path => '../'
+
+  target 'Custom-Video-Player_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
