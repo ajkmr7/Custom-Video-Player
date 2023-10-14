@@ -8,11 +8,13 @@ public class VideoPlayerViewController: UIViewController {
     
     private var periodicTimeObserver: Any?
     private var didSetupControls: Bool = false
+    private var controlsHiddenTimer: Timer?
+    private let controlsHideDelay: TimeInterval = 3.0
     var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
-    private var playerItem: AVPlayerItem?
+    var playerItem: AVPlayerItem?
     let playerControlsView = PlayerControlsView()
-    
+    var subtitleSelectionView: SubtitleSelectionViewController?
     private let notification = NotificationCenter.default
     
     // Custom Subtitle Styling
@@ -39,14 +41,14 @@ public class VideoPlayerViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         tabBarController?.tabBar.isHidden = true
     }
-
+    
     override public func viewWillDisappear(_: Bool) {
         resetOrientation(UIInterfaceOrientationMask.portrait)
         UIViewController.attemptRotationToDeviceOrientation()
         navigationController?.setNavigationBarHidden(false, animated: false)
         tabBarController?.tabBar.isHidden = false
     }
-
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         resetOrientation(UIInterfaceOrientationMask.landscapeRight)
@@ -54,19 +56,19 @@ public class VideoPlayerViewController: UIViewController {
         notification.addObserver(self, selector: #selector(appMovedToBackground), name: .UIApplicationDidEnterBackground, object: nil)
         setupPlayer()
     }
-
+    
     @objc func shouldForceLandscape() {
         //  View controller that response this protocol can rotate ...
     }
-
+    
     @objc func appMovedToBackground() {
         pausePlayer()
     }
-
+    
     public override var shouldAutorotate: Bool {
         return true
     }
-
+    
     public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .landscape
     }
@@ -75,7 +77,11 @@ public class VideoPlayerViewController: UIViewController {
         super.viewDidLayoutSubviews()
         playerLayer?.frame = view.bounds
     }
-    
+}
+
+// MARK: - Video Player Setup
+
+extension VideoPlayerViewController {
     private func setupPlayer() {
         guard let videoURL = viewModel.url else { return }
         playerItem = AVPlayerItem(url: videoURL)
@@ -100,6 +106,22 @@ public class VideoPlayerViewController: UIViewController {
             make.edges.equalToSuperview()
         }
         playerControlsView.delegate = self
+        setupGestureRecognizers()
+        setupSubtiteSelectionView()
+    }
+    
+    private func setupSubtiteSelectionView() {
+        guard let supportedLanguages = player?.supportedSubtitleOptions, !supportedLanguages.isEmpty else {
+            playerControlsView.disableSubtitlesButton()
+            return
+        }
+        subtitleSelectionView = SubtitleSelectionViewController(viewModel: .init(supportedLanguages: supportedLanguages))
+        subtitleSelectionView?.delegate = self
+    }
+    
+    private func setupGestureRecognizers() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        view.addGestureRecognizer(tapGesture)
     }
     
     func pausePlayer() {
@@ -108,7 +130,7 @@ public class VideoPlayerViewController: UIViewController {
         playerControlsView.playPauseButtonImage = VideoPlayerImage.playButton.uiImage
         viewModel.playerState = .pause
     }
-
+    
     func resumePlayer() {
         guard viewModel.playerState == .pause else { return }
         player?.play()
@@ -133,7 +155,7 @@ extension VideoPlayerViewController {
             }
         }
     }
-
+    
     public override func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
         switch keyPath {
         case "duration":
@@ -145,36 +167,88 @@ extension VideoPlayerViewController {
             break
         }
     }
-
+    
     private func handleDuration(_ duration: Double) {
         playerControlsView.seekBarMaximumValue = Float(duration)
         setupControls()
         didSetupControls = true
+        showControls()
     }
 }
 
-// MARK: - Subtitle Functionality
+// MARK: - Show/Hide Control Functionality
 
 extension VideoPlayerViewController {
-    
-    @objc private func showSubtitleOptions() {
-        guard let supportedSubtitleOptions = player?.supportedSubtitleOptions else { return }
-        
-        let alertController = UIAlertController(title: "Select Subtitle", message: nil, preferredStyle: .actionSheet)
-        
-        for option in supportedSubtitleOptions {
-            alertController.addAction(UIAlertAction(title: option.displayName, style: .default) { _ in
-                self.handleSubtitleSelection(option: option)
-            })
-        }
-        
-        present(alertController, animated: true, completion: nil)
+    @objc private func handleTap(_: UITapGestureRecognizer) {
+        resetControlsHiddenTimer()
+        playerControlsView.isHidden ? showControls() : hideControls()
     }
     
-    private func handleSubtitleSelection(option: AVMediaSelectionOption) {
-        guard let mediaSelectionGroup = playerItem?.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) else { return }
-        playerItem?.select(option, in: mediaSelectionGroup)
+    private func showControls() {
+        playerControlsView.isHidden = false
+        
+        UIView.animate(withDuration: 0.25) {
+            self.playerControlsView.alpha = 1
+        }
+        resetControlsHiddenTimer()
+    }
+    
+    @objc func hideControls() {
+        UIView.animate(withDuration: 0.25) {
+            self.playerControlsView.alpha = 0
+        } completion: { _ in
+            self.playerControlsView.isHidden = true
+        }
+    }
+    
+    func resetControlsHiddenTimer() {
+        invalidateControlsHiddenTimer()
+        controlsHiddenTimer = Timer.scheduledTimer(timeInterval: controlsHideDelay,
+                                                   target: self,
+                                                   selector: #selector(hideControlsDueToInactivity), userInfo: nil, repeats: false)
+    }
+    
+    func invalidateControlsHiddenTimer() {
+        controlsHiddenTimer?.invalidate()
+        controlsHiddenTimer = nil
+    }
+    
+    @objc private func hideControlsDueToInactivity() {
+        hideControls()
     }
 }
 
+// MARK: - Show Tooltip Functionality
 
+extension VideoPlayerViewController {
+    func showTooltip(at point: CGPoint, time: Double) {
+        guard let videoURL = viewModel.url else { return }
+        let timeInSeconds = CMTimeMakeWithSeconds(time, CMTimeScale(NSEC_PER_SEC))
+        
+        player?.seek(to: timeInSeconds)
+        
+        let generator = AVAssetImageGenerator(asset: AVAsset(url: videoURL))
+        generator.appliesPreferredTrackTransform = true
+        generator.requestedTimeToleranceBefore = kCMTimeZero
+        generator.requestedTimeToleranceAfter = kCMTimeZero
+        
+        do {
+            let cgImage = try generator.copyCGImage(at: timeInSeconds, actualTime: nil)
+            let image = UIImage(cgImage: cgImage)
+            
+            let tooltipImageView = UIImageView(image: image)
+            
+            let tooltipSize = CGSize(width: 100, height: 100)
+            tooltipImageView.frame = CGRect(x: point.x - tooltipSize.width / 2, y: point.y - tooltipSize.height, width: tooltipSize.width, height: tooltipSize.height)
+            
+            view.addSubview(tooltipImageView)
+            
+            UIView.animate(withDuration: 0.2, animations: {
+                tooltipImageView.alpha = 1
+                tooltipImageView.frame.origin.y = point.y - tooltipSize.height
+            })
+        } catch {
+            // Handle any errors related to capturing the video frame
+        }
+    }
+}
