@@ -7,6 +7,7 @@ public class VideoPlayerViewController: UIViewController {
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var playerItem: AVPlayerItem?
+    private let playerControlsView = PlayerControlsView()
     
     // Custom Subtitle Styling
     private let subtitleStyling = AVTextStyleRule(textMarkupAttributes: [
@@ -23,6 +24,16 @@ public class VideoPlayerViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override public func viewWillAppear(_: Bool) {
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        tabBarController?.tabBar.isHidden = true
+    }
+
+    override public func viewWillDisappear(_: Bool) {
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        tabBarController?.tabBar.isHidden = false
     }
     
     override public func viewDidLoad() {
@@ -50,7 +61,10 @@ public class VideoPlayerViewController: UIViewController {
     }
     
     private func setupControls() {
-        addSubtitleButton()
+        view.addSubview(playerControlsView)
+        playerControlsView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
     
     private func resumePlayer() {

@@ -13,4 +13,9 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Custom-Video-Player/Classes/**/*'
   s.dependency 'SnapKit'
+  
+   s.resource_bundles = {
+    'Custom-Video-Player' => ['Custom-Video-Player/Assets/**']
+  }
+  s.resources = ['Custom-Video-Player/Assets/**']
 end
