@@ -15,6 +15,7 @@ struct VideoPlayerColor: Equatable {
 enum VideoPlayerColorPalatte: String, CaseIterable, Equatable, NameableAsset {
     case white
     case pearlWhite
+    case black
 
     var uiColor: UIColor { UIColor(self) }
 }

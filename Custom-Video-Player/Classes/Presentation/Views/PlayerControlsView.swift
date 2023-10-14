@@ -26,7 +26,7 @@ class PlayerControlsView: UIView {
     private let subtitleButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.subtitlesButton.uiImage, for: .normal)
     }
-
+    
     private let moreButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.moreButton.uiImage, for: .normal)
     }
@@ -36,11 +36,11 @@ class PlayerControlsView: UIView {
     private let rewindButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.rewindButton.uiImage, for: .normal)
     }
-
+    
     private let playPauseButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.pauseButton.uiImage, for: .normal)
     }
-
+    
     private let forwardButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.forwardButton.uiImage, for: .normal)
     }
@@ -56,34 +56,34 @@ class PlayerControlsView: UIView {
         $0.font = FontUtility.helveticaNeueLight(ofSize: 14)
         $0.textColor = VideoPlayerColor(palette: .pearlWhite).uiColor
     }
-
-        private let seekBar = UISlider().configure { seekBar in
-            seekBar.maximumTrackTintColor = VideoPlayerColor(palette: .pearlWhite).uiColor
-            seekBar.minimumTrackTintColor = VideoPlayerColor(palette: .white).uiColor
-            seekBar.minimumValue = 0
-            seekBar.setThumbImage(nil, for: .normal)
-            let thumbSize = CGSize(width: CGFloat.space12, height: CGFloat.space12)
-            let thumbImage = UIGraphicsImageRenderer(size: thumbSize).image { _ in
-                VideoPlayerColor(palette: .white).uiColor.setFill()
-                UIBezierPath(ovalIn: CGRect(origin: .zero, size: thumbSize)).fill()
-            }
-            seekBar.setThumbImage(thumbImage, for: .highlighted)
+    
+    private let seekBar = UISlider().configure { seekBar in
+        seekBar.maximumTrackTintColor = VideoPlayerColor(palette: .pearlWhite).uiColor
+        seekBar.minimumTrackTintColor = VideoPlayerColor(palette: .white).uiColor
+        seekBar.minimumValue = 0
+        seekBar.setThumbImage(nil, for: .normal)
+        let thumbSize = CGSize(width: CGFloat.space12, height: CGFloat.space12)
+        let thumbImage = UIGraphicsImageRenderer(size: thumbSize).image { _ in
+            VideoPlayerColor(palette: .white).uiColor.setFill()
+            UIBezierPath(ovalIn: CGRect(origin: .zero, size: thumbSize)).fill()
         }
-
+        seekBar.setThumbImage(thumbImage, for: .highlighted)
+    }
+    
     private let currentTimeLabel = UILabel().configure {
-        $0.text = "00:00"
+        $0.text = "00:00/"
         $0.font = FontUtility.helveticaNeueLight(ofSize: 14)
         $0.textColor = VideoPlayerColor(palette: .white).uiColor
     }
-
+    
     private let totalTimeLabel = UILabel().configure {
-        $0.text = "/ 00:00"
+        $0.text = "00:00"
         $0.font = FontUtility.helveticaNeueLight(ofSize: 14)
         $0.textColor = VideoPlayerColor(palette: .white).uiColor
     }
     
     // MARK: - Control State Setters
-
+    
     var playPauseButtonImage: UIImage? {
         get {
             playPauseButton.currentImage
@@ -92,7 +92,7 @@ class PlayerControlsView: UIView {
             playPauseButton.setImage(newValue, for: .normal)
         }
     }
-
+    
     var seekBarValue: Float {
         get {
             seekBar.value
@@ -101,7 +101,7 @@ class PlayerControlsView: UIView {
             seekBar.value = newValue
         }
     }
-
+    
     var seekBarMaximumValue: Float {
         get {
             seekBar.maximumValue
@@ -110,7 +110,7 @@ class PlayerControlsView: UIView {
             seekBar.maximumValue = newValue
         }
     }
-
+    
     var currentTimeLabelText: String? {
         get {
             currentTimeLabel.text
@@ -119,7 +119,7 @@ class PlayerControlsView: UIView {
             currentTimeLabel.text = newValue
         }
     }
-
+    
     var totalTimeLabelText: String? {
         get {
             totalTimeLabel.text
@@ -128,7 +128,7 @@ class PlayerControlsView: UIView {
             totalTimeLabel.text = newValue
         }
     }
-
+    
     var titleLabelText: String? {
         get {
             titleLabel.text
@@ -137,7 +137,7 @@ class PlayerControlsView: UIView {
             titleLabel.text = newValue
         }
     }
-
+    
     var subtitleLabelText: String? {
         get {
             subtitleLabel.text
@@ -146,21 +146,21 @@ class PlayerControlsView: UIView {
             subtitleLabel.text = newValue
         }
     }
-
+    
     var isPlaying: Bool = false {
         didSet {
             playPauseButtonImage = isPlaying ? VideoPlayerImage.pauseButton.uiImage : VideoPlayerImage.playButton.uiImage
         }
     }
-
+    
     private let dynamicSpacing: CGFloat = UIScreen.main.bounds.height * 0.055
-
+    
     init() {
         super.init(frame: .zero)
         setupViews()
         setUpEvents()
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         fatalError("init(coder:) has not been implemented")
@@ -202,7 +202,7 @@ extension PlayerControlsView {
         playPauseButton.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
+        
         forwardButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(playPauseButton.snp.trailing).offset(CGFloat.space16)
@@ -257,32 +257,40 @@ extension PlayerControlsView {
         subtitleButton.addTarget(self, action: #selector(subtitleButtonTap), for: .touchUpInside)
         moreButton.addTarget(self, action: #selector(moreButtonTap), for: .touchUpInside)
     }
-
+    
     @IBAction private func pausePlay(_: UIButton) {
         delegate?.togglePlayPause()
     }
-
+    
     @IBAction private func doForwardJump(_: UIButton) {
         delegate?.seekForward()
     }
-
+    
     @IBAction private func doBackwardJump(_: UIButton) {
         delegate?.seekBackward()
     }
-
+    
     @IBAction private func backButtonTap(_: UIButton) {
         delegate?.goBack()
     }
-
+    
     @IBAction private func subtitleButtonTap(_: UIButton) {
         delegate?.switchSubtitles()
     }
-
+    
     @IBAction private func moreButtonTap(_: UIButton) {
         delegate?.openSettings()
     }
-
+    
     @objc private func onSliderValChanged(slider: UISlider, event: UIEvent) {
         delegate?.sliderValueChanged(slider: slider, event: event)
+    }
+}
+
+// MARK: - Player Control State Updation
+
+extension PlayerControlsView {
+    func disableSubtitlesButton() {
+        subtitleButton.isEnabled = false
     }
 }
