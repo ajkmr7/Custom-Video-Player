@@ -1,10 +1,10 @@
 import Foundation
 
-public protocol Configurable {}
+protocol Configurable {}
 
 extension NSObject: Configurable {}
 
-public extension Configurable where Self: AnyObject {
+extension Configurable where Self: AnyObject {
     @discardableResult
     func configure(_ transform: (Self) -> Void) -> Self {
         transform(self)

@@ -1,4 +1,4 @@
-public enum VideoPlayerImage: String, CaseIterable, NameableAsset {
+enum VideoPlayerImage: String, CaseIterable, NameableAsset {
     case backButton = "back_button"
     case forwardButton = "forward_button"
     case moreButton = "more_button"

@@ -1,14 +1,14 @@
 import UIKit
 
-public protocol NameableAsset: RawRepresentable where RawValue == String {
+protocol NameableAsset: RawRepresentable where RawValue == String {
     var namespace: String? { get }
 }
 
-public extension NameableAsset where RawValue == String {
+extension NameableAsset where RawValue == String {
     var namespace: String? { nil }
 }
 
-public extension UIColor {
+extension UIColor {
     convenience init<T: NameableAsset>(_ color: T) {
         var name = color.rawValue
         if let namespace = color.namespace {
@@ -23,7 +23,7 @@ public extension UIColor {
     }
 }
 
-public extension UIImage {
+extension UIImage {
     convenience init<T: NameableAsset>(_ image: T, resourceBundle: Bundle) {
         var name = image.rawValue
         if let namespace = image.namespace {

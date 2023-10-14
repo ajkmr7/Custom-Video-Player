@@ -46,6 +46,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    private func topViewControllerWithRootViewController(rootViewController: UIViewController!) -> UIViewController? {
+        if rootViewController == nil {
+            return nil
+        }
+        if rootViewController.isKind(of: UITabBarController.self) {
+            return topViewControllerWithRootViewController(rootViewController: (rootViewController as! UITabBarController).selectedViewController)
+        } else if rootViewController.isKind(of: UINavigationController.self) {
+            return topViewControllerWithRootViewController(rootViewController: (rootViewController as! UINavigationController).visibleViewController)
+        } else if rootViewController.presentedViewController != nil {
+            return topViewControllerWithRootViewController(rootViewController: rootViewController.presentedViewController)
+        }
+        return rootViewController
+    }
 
+    func application(_: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        if let rootViewController = topViewControllerWithRootViewController(rootViewController: window?.rootViewController), rootViewController.responds(to: Selector("shouldForceLandscape")) {
+            // Unlock landscape view orientations for this view controller
+            return .landscape
+        }
+        return .portrait
+    }
 }
 

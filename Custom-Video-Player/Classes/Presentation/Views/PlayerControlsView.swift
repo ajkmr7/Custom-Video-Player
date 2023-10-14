@@ -16,28 +16,59 @@ import SnapKit
 
 class PlayerControlsView: UIView {
     weak var delegate: PlayerControlsViewDelegate?
+    
+    // MARK: - Controls on Top
+    
+    private let backButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.backButton.uiImage, for: .normal)
+    }
+    
+    private let subtitleButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.subtitlesButton.uiImage, for: .normal)
+    }
+
+    private let moreButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.moreButton.uiImage, for: .normal)
+    }
+    
+    // MARK: - Controls on Middle
+    
+    private let rewindButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.rewindButton.uiImage, for: .normal)
+    }
 
     private let playPauseButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.pauseButton.uiImage, for: .normal)
     }
 
-    private let backButton = UIButton().configure {
-        $0.setImage(VideoPlayerImage.backButton.uiImage, for: .normal)
-    }
-
-    private let rewindButton = UIButton().configure {
-        $0.setImage(VideoPlayerImage.rewindButton.uiImage, for: .normal)
-    }
-
     private let forwardButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.forwardButton.uiImage, for: .normal)
     }
-
-    private let seekBar = UISlider().configure { seekBar in
-        seekBar.maximumTrackTintColor = VideoPlayerColor(palette: .pearlWhite).uiColor
-        seekBar.minimumTrackTintColor = VideoPlayerColor(palette: .white).uiColor
-        seekBar.minimumValue = 0
+    
+    // MARK: - Controls on Bottom
+    
+    private let titleLabel = UILabel().configure {
+        $0.font = FontUtility.helveticaNeueRegular(ofSize: 20)
+        $0.textColor = VideoPlayerColor(palette: .white).uiColor
     }
+    
+    private let subtitleLabel = UILabel().configure {
+        $0.font = FontUtility.helveticaNeueLight(ofSize: 14)
+        $0.textColor = VideoPlayerColor(palette: .pearlWhite).uiColor
+    }
+
+        private let seekBar = UISlider().configure { seekBar in
+            seekBar.maximumTrackTintColor = VideoPlayerColor(palette: .pearlWhite).uiColor
+            seekBar.minimumTrackTintColor = VideoPlayerColor(palette: .white).uiColor
+            seekBar.minimumValue = 0
+            seekBar.setThumbImage(nil, for: .normal)
+            let thumbSize = CGSize(width: CGFloat.space12, height: CGFloat.space12)
+            let thumbImage = UIGraphicsImageRenderer(size: thumbSize).image { _ in
+                VideoPlayerColor(palette: .white).uiColor.setFill()
+                UIBezierPath(ovalIn: CGRect(origin: .zero, size: thumbSize)).fill()
+            }
+            seekBar.setThumbImage(thumbImage, for: .highlighted)
+        }
 
     private let currentTimeLabel = UILabel().configure {
         $0.text = "00:00"
@@ -50,25 +81,8 @@ class PlayerControlsView: UIView {
         $0.font = FontUtility.helveticaNeueLight(ofSize: 14)
         $0.textColor = VideoPlayerColor(palette: .white).uiColor
     }
-
-    private let titleLabel = UILabel().configure {
-        $0.font = FontUtility.helveticaNeueRegular(ofSize: 20)
-        $0.textColor = VideoPlayerColor(palette: .white).uiColor
-    }
     
-    private let subtitleLabel = UILabel().configure {
-        $0.font = FontUtility.helveticaNeueLight(ofSize: 14)
-        $0.textColor = VideoPlayerColor(palette: .pearlWhite).uiColor
-    }
-
-    private let subtitleButton = UIButton().configure {
-        $0.setImage(VideoPlayerImage.subtitlesButton.uiImage, for: .normal)
-    }
-
-    private let moreButton = UIButton().configure {
-        $0.setImage(VideoPlayerImage.moreButton.uiImage, for: .normal)
-        $0.isHidden = true
-    }
+    // MARK: - Control State Setters
 
     var playPauseButtonImage: UIImage? {
         get {
@@ -138,13 +152,7 @@ class PlayerControlsView: UIView {
             playPauseButtonImage = isPlaying ? VideoPlayerImage.pauseButton.uiImage : VideoPlayerImage.playButton.uiImage
         }
     }
-    
-    let episodeTitleView = UIStackView().configure {
-        $0.axis = .horizontal
-        $0.spacing = CGFloat.space8
-    }
 
-    let durationView = UIView()
     private let dynamicSpacing: CGFloat = UIScreen.main.bounds.height * 0.055
 
     init() {
@@ -157,29 +165,19 @@ class PlayerControlsView: UIView {
         super.init(coder: aDecoder)
         fatalError("init(coder:) has not been implemented")
     }
+}
 
+// MARK: - Player Control Views
+
+extension PlayerControlsView {
     private func setupViews() {
-        addSubview(playPauseButton)
-        addSubview(rewindButton)
-        addSubview(forwardButton)
-        addSubview(seekBar)
-        addSubview(currentTimeLabel)
-        addSubview(totalTimeLabel)
         addSubview(backButton)
-        addSubview(titleLabel)
         addSubview(subtitleButton)
-        addSubview(episodeTitleView)
         addSubview(moreButton)
-        addSubview(subtitleLabel)
-
+        
         backButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(CGFloat.space24)
             make.leading.equalToSuperview().offset(dynamicSpacing)
-        }
-        
-        moreButton.snp.makeConstraints { make in
-            make.top.equalTo(backButton.snp.top)
-            make.trailing.equalToSuperview().offset(-dynamicSpacing)
         }
         
         subtitleButton.snp.makeConstraints { make in
@@ -187,18 +185,45 @@ class PlayerControlsView: UIView {
             make.trailing.equalTo(moreButton.snp.leading).offset(-CGFloat.space8)
         }
         
-        playPauseButton.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        moreButton.snp.makeConstraints { make in
+            make.top.equalTo(backButton.snp.top)
+            make.trailing.equalToSuperview().offset(-dynamicSpacing)
         }
+        
+        addSubview(rewindButton)
+        addSubview(playPauseButton)
+        addSubview(forwardButton)
         
         rewindButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalTo(playPauseButton.snp.leading).offset(-CGFloat.space16)
         }
+        
+        playPauseButton.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
 
         forwardButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(playPauseButton.snp.trailing).offset(CGFloat.space16)
+        }
+        
+        addSubview(titleLabel)
+        addSubview(subtitleLabel)
+        addSubview(seekBar)
+        addSubview(currentTimeLabel)
+        addSubview(totalTimeLabel)
+        
+        titleLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(subtitleLabel.snp.top).offset(-CGFloat.space4)
+            make.leading.equalTo(seekBar.snp.leading)
+            make.trailing.equalTo(seekBar.snp.trailing)
+        }
+        
+        subtitleLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(seekBar.snp.top).offset(-CGFloat.space12)
+            make.leading.equalTo(seekBar.snp.leading)
+            make.trailing.equalTo(seekBar.snp.trailing)
         }
         
         seekBar.snp.makeConstraints { make in
@@ -208,20 +233,15 @@ class PlayerControlsView: UIView {
             make.height.equalTo(CGFloat.space2)
         }
         
-        subtitleLabel.snp.makeConstraints { make in
+        currentTimeLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(totalTimeLabel.snp.leading)
+            make.bottom.equalTo(totalTimeLabel.snp.bottom)
+        }
+        
+        totalTimeLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(moreButton.snp.trailing)
             make.bottom.equalTo(seekBar.snp.top).offset(-CGFloat.space12)
-            make.leading.equalTo(seekBar.snp.leading)
-            make.trailing.equalTo(seekBar.snp.trailing)
         }
-
-        titleLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(subtitleLabel.snp.top).offset(-CGFloat.space4)
-            make.leading.equalTo(seekBar.snp.leading)
-            make.trailing.equalTo(seekBar.snp.trailing)
-        }
-
-        durationView.addSubview(currentTimeLabel)
-        durationView.addSubview(totalTimeLabel)
     }
 }
 
@@ -236,18 +256,6 @@ extension PlayerControlsView {
         backButton.addTarget(self, action: #selector(backButtonTap), for: .touchUpInside)
         subtitleButton.addTarget(self, action: #selector(subtitleButtonTap), for: .touchUpInside)
         moreButton.addTarget(self, action: #selector(moreButtonTap), for: .touchUpInside)
-    }
-
-    func disableSubtitleButton() {
-        subtitleButton.isEnabled = false
-    }
-
-    func unhideSettingsButton() {
-        moreButton.isHidden = false
-    }
-
-    func hideSettingsButton() {
-        moreButton.isHidden = true
     }
 
     @IBAction private func pausePlay(_: UIButton) {

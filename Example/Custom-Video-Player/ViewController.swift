@@ -28,8 +28,19 @@ class ViewController: UIViewController {
     }
 
     @objc private func navigatoToVideoPlayer() {
-        let videoPlayerVC = VideoPlayerViewController(videoURL: URL(string: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8")!)
-        navigationController?.pushViewController(videoPlayerVC, animated: true)
+        guard let navigationController = navigationController else { return }
+        let playlist = VideoPlaylist(
+            title: "Playlist",
+            videos: [
+                Video(
+                    url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+                    title: "Video"
+                )
+            ]
+        )
+        let config = VideoPlayerConfig(playlist: playlist)
+        let coordinator = VideoPlayerCoordinator(navigationController: navigationController)
+        coordinator.invoke(videoPlayerConfig: config)
     }
 }
 
