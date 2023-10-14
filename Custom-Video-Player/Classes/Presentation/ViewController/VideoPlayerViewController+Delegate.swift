@@ -2,17 +2,22 @@ import AVKit
 import SnapKit
 import UIKit
 
+// MARK: - Player Control Actions
+
 extension VideoPlayerViewController: PlayerControlsViewDelegate {
     func goBack() {
         coordinator.navigationController.dismiss(animated: true)
     }
     
     func switchSubtitles() {
-        
+        invalidateControlsHiddenTimer()
+        pausePlayer()
+        guard let subtitleSelectionView = subtitleSelectionView else { return }
+        coordinator.navigationController.presentedViewController?.present(subtitleSelectionView, animated: true)
     }
     
     func openSettings() {
-        
+        // TODO: Implement settings functionality
     }
     
     func seekBackward() {
@@ -62,16 +67,36 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
                 player.pause()
                 guard let currentTime = player.currentItem?.currentTime() else { return }
                 pauseTime = currentTime
+                invalidateControlsHiddenTimer()
             case .moved:
-                break
+                let seekingCM = CMTimeMake(Int64(slider.value * Float(pauseTime.timescale)), pauseTime.timescale)
+                let thumbRect = slider.thumbRect(forBounds: slider.bounds, trackRect: slider.trackRect(forBounds: slider.bounds), value: slider.value)
+                let thumbCenterX = thumbRect.origin.x + thumbRect.size.width / 2
+                let pointOnSlider = CGPoint(x: thumbCenterX, y: slider.frame.origin.y - 20)
+                showTooltip(at: pointOnSlider, time: seekingCM.seconds)
             case .ended:
+                resetControlsHiddenTimer()
                 let seekingCM = CMTimeMake(Int64(slider.value * Float(pauseTime.timescale)), pauseTime.timescale)
                 player.seek(to: seekingCM)
-                /// Retain video player state on seeking: whenever user interacts with seek bar, we pause the player internally in order to calculate the new time. So, once the seek bar action is completed we would need to retain the original playback state of the player.
+                /// Retain video player state on seeking: whenever the user interacts with the seek bar, we pause the player internally to calculate the new time. So, once the seek bar action is completed, we would need to retain the original playback state of the player.
                 viewModel.playerState == .play ? player.play() : player.pause()
             default:
                 break
             }
         }
+    }
+}
+
+// MARK: - Subtitle Functionality
+
+extension VideoPlayerViewController: SubtitleSelectionDelegate {
+    func onSubtitleTrackSelected(subtitleTrack: AVMediaSelectionOption?) {
+        guard let mediaSelectionGroup = playerItem?.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) else { return }
+        playerItem?.select(subtitleTrack, in: mediaSelectionGroup)
+    }
+    
+    func onDismissed() {
+        resumePlayer()
+        resetControlsHiddenTimer()
     }
 }
