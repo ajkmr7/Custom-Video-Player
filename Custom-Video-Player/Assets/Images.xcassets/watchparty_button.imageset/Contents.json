@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "watchparty_button.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

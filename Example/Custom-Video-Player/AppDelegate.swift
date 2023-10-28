@@ -7,16 +7,19 @@
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var viewController: ViewController?
 
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow()
-        let viewController = ViewController()
-        let navigationController = UINavigationController(rootViewController: viewController)
+        FirebaseApp.configure()
+        viewController = ViewController()
+        let navigationController = UINavigationController(rootViewController: viewController!)
         window!.rootViewController = navigationController
         window!.makeKeyAndVisible()
         window!.backgroundColor = .white
@@ -66,6 +69,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return .landscape
         }
         return .portrait
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        if let scheme = url.scheme, scheme.lowercased() == "custom-video-player" {
+            if url.pathComponents.count >= 2 {
+                let host = url.pathComponents[1]
+                let deeplink = Deeplink(rawValue: host)
+                if let deeplink = deeplink {
+                    viewController?.handleDeeplink(deeplink, url: url)
+                    return true
+                }
+            }
+        }
+        return false
     }
 }
 

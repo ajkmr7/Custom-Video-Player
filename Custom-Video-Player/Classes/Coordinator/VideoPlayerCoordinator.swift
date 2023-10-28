@@ -7,8 +7,8 @@ public final class VideoPlayerCoordinator {
         self.navigationController =  navigationController
     }
 
-    public func invoke(videoPlayerConfig: VideoPlayerConfig) {
-        let viewModel = VideoPlayerViewModel(config: videoPlayerConfig)
+    public func invoke(videoPlayerConfig: VideoPlayerConfig, partyID: String? = nil, chatName: String? = nil) {
+        let viewModel = VideoPlayerViewModel(videoPlayerConfig: videoPlayerConfig, partyID: partyID, chatName: chatName)
         let videoPlayer = VideoPlayerViewController(viewModel: viewModel, coordinator: self)
         if navigationController.presentedViewController != nil {
             navigationController.dismiss(animated: true)
