@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		050AB20681694A45229680BA /* Pods_Custom_Video_Player_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62FF59BF4B3FA80E3BE82DBF /* Pods_Custom_Video_Player_Tests.framework */; };
+		2DDB07812AED1AFB0026E0E3 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDB07802AED1AFB0026E0E3 /* ViewModel.swift */; };
+		2DDB07832AED1B4C0026E0E3 /* ViewController+DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDB07822AED1B4C0026E0E3 /* ViewController+DeepLink.swift */; };
+		2DF5ECE02AEC093800571F3A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2DF5ECDF2AEC093800571F3A /* GoogleService-Info.plist */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -28,6 +31,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2DDB07802AED1AFB0026E0E3 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		2DDB07822AED1B4C0026E0E3 /* ViewController+DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+DeepLink.swift"; sourceTree = "<group>"; };
+		2DF5ECDF2AEC093800571F3A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		39ED19C3832B34A4C3464F0F /* Pods_Custom_Video_Player_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Custom_Video_Player_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* Custom-Video-Player_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Custom-Video-Player_Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -44,7 +50,7 @@
 		750D2975E42FCF11BA61F560 /* Pods-Custom-Video-Player_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Custom-Video-Player_Tests.debug.xcconfig"; path = "Target Support Files/Pods-Custom-Video-Player_Tests/Pods-Custom-Video-Player_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		8452C11896AA8CFAEAF5855D /* Pods-Custom-Video-Player_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Custom-Video-Player_Example.release.xcconfig"; path = "Target Support Files/Pods-Custom-Video-Player_Example/Pods-Custom-Video-Player_Example.release.xcconfig"; sourceTree = "<group>"; };
 		BDEDF90A18A8B2BDA6477F3C /* Pods-Custom-Video-Player_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Custom-Video-Player_Tests.release.xcconfig"; path = "Target Support Files/Pods-Custom-Video-Player_Tests/Pods-Custom-Video-Player_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		CB73068E2F962EE1A3B9C667 /* Custom-Video-Player.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = "Custom-Video-Player.podspec"; path = "../Custom-Video-Player.podspec"; sourceTree = "<group>"; };
+		CB73068E2F962EE1A3B9C667 /* Custom-Video-Player.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = "Custom-Video-Player.podspec"; path = "../Custom-Video-Player.podspec"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		D3D1CAC43C6FD1F7D972DC93 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		FA5447CEE60916A8711D1A29 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,6 +89,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				2DF5ECDF2AEC093800571F3A /* GoogleService-Info.plist */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for Custom-Video-Player */,
 				607FACE81AFB9204008FA782 /* Tests */,
@@ -110,6 +117,8 @@
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
+				2DDB07802AED1AFB0026E0E3 /* ViewModel.swift */,
+				2DDB07822AED1B4C0026E0E3 /* ViewController+DeepLink.swift */,
 			);
 			name = "Example for Custom-Video-Player";
 			path = "Custom-Video-Player";
@@ -212,10 +221,12 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = SNGJ46Y5H2;
 						LastSwiftMigration = 0900;
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = SNGJ46Y5H2;
 						LastSwiftMigration = 0900;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
@@ -247,6 +258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
+				2DF5ECE02AEC093800571F3A /* GoogleService-Info.plist in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
@@ -314,12 +326,30 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Custom-Video-Player_Example/Pods-Custom-Video-Player_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Custom-Video-Player/Custom_Video_Player.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseAppCheckInterop/FirebaseAppCheckInterop.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCore/FirebaseCore.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCoreInternal/FirebaseCoreInternal.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseDatabase/FirebaseDatabase.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseInstallations/FirebaseInstallations.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Custom_Video_Player.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseAppCheckInterop.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreInternal.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseDatabase.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseInstallations.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -334,6 +364,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				2DDB07812AED1AFB0026E0E3 /* ViewModel.swift in Sources */,
+				2DDB07832AED1B4C0026E0E3 /* ViewController+DeepLink.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -480,6 +512,7 @@
 			baseConfigurationReference = 638CB1990F35CA69829B74B2 /* Pods-Custom-Video-Player_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SNGJ46Y5H2;
 				INFOPLIST_FILE = "Custom-Video-Player/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -496,6 +529,7 @@
 			baseConfigurationReference = 8452C11896AA8CFAEAF5855D /* Pods-Custom-Video-Player_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SNGJ46Y5H2;
 				INFOPLIST_FILE = "Custom-Video-Player/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -511,6 +545,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 750D2975E42FCF11BA61F560 /* Pods-Custom-Video-Player_Tests.debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = SNGJ46Y5H2;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -533,6 +568,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BDEDF90A18A8B2BDA6477F3C /* Pods-Custom-Video-Player_Tests.release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = SNGJ46Y5H2;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",

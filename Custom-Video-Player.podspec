@@ -13,6 +13,8 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Custom-Video-Player/Classes/**/*'
   s.dependency 'SnapKit'
+  s.dependency 'Firebase'
+  s.dependency 'Firebase/Database'
   
    s.resource_bundles = {
     'Custom-Video-Player' => ['Custom-Video-Player/Assets/**']

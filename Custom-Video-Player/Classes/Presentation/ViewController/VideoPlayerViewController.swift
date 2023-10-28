@@ -15,6 +15,21 @@ public class VideoPlayerViewController: UIViewController {
     var playerItem: AVPlayerItem?
     let playerControlsView = PlayerControlsView()
     var subtitleSelectionView: SubtitleSelectionViewController?
+    var participantsView: ParticipantsViewController?
+    let hostWatchPartyAlert = UIAlertController(
+        title: "Let’s get the party started",
+        message: "Watch and chat with your friends and family.",
+        preferredStyle: .alert
+    ).configure {
+        $0.addTextField { textField in
+            textField.placeholder = "Chat Name"
+        }
+    }
+    let leaveWatchPartyAlert = UIAlertController(
+        title: "Exit Party",
+        message: "Are you sure you want to exit the watch party?",
+        preferredStyle: .alert
+    )
     private let notification = NotificationCenter.default
     
     // Custom Subtitle Styling
@@ -53,7 +68,7 @@ public class VideoPlayerViewController: UIViewController {
         super.viewDidLoad()
         resetOrientation(UIInterfaceOrientationMask.landscapeRight)
         UIViewController.attemptRotationToDeviceOrientation()
-        notification.addObserver(self, selector: #selector(appMovedToBackground), name: .UIApplicationDidEnterBackground, object: nil)
+        notification.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         setupPlayer()
     }
     
@@ -108,6 +123,11 @@ extension VideoPlayerViewController {
         playerControlsView.delegate = self
         setupGestureRecognizers()
         setupSubtiteSelectionView()
+        setupHostWatchPartyAlertView()
+        setupLeaveWatchPartyAlertView()
+        if viewModel.watchPartyConfig?.partyID != nil {
+            onWatchPartyEntered()
+        }
     }
     
     private func setupSubtiteSelectionView() {
@@ -117,6 +137,31 @@ extension VideoPlayerViewController {
         }
         subtitleSelectionView = SubtitleSelectionViewController(viewModel: .init(supportedLanguages: supportedLanguages))
         subtitleSelectionView?.delegate = self
+    }
+    
+    func setupParticipantsView(with participants: [String]) {
+        participantsView = ParticipantsViewController(viewModel: .init(participants: participants))
+    }
+    
+    private func setupHostWatchPartyAlertView() {
+        hostWatchPartyAlert.addAction(UIAlertAction(title: "Create", style: .default) { [weak self] _ in
+            if let textField = self?.hostWatchPartyAlert.textFields?.first {
+                if let chatName = textField.text, !chatName.isEmpty {
+                    self?.viewModel.hostParty(for: chatName, currentTime: self?.player?.currentItem?.currentTime())
+                } else {
+                    self?.viewModel.hostParty(for: "Host", currentTime: self?.player?.currentItem?.currentTime())
+                }
+            }
+        })
+        hostWatchPartyAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        viewModel.watchPartyDelegate = self
+    }
+    
+    private func setupLeaveWatchPartyAlertView() {
+        leaveWatchPartyAlert.addAction(UIAlertAction(title: "Leave", style: .default) { [weak self] _ in
+            self?.viewModel.leaveParty()
+        })
+        leaveWatchPartyAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
     }
     
     private func setupGestureRecognizers() {
@@ -215,40 +260,5 @@ extension VideoPlayerViewController {
     
     @objc private func hideControlsDueToInactivity() {
         hideControls()
-    }
-}
-
-// MARK: - Show Tooltip Functionality
-
-extension VideoPlayerViewController {
-    func showTooltip(at point: CGPoint, time: Double) {
-        guard let videoURL = viewModel.url else { return }
-        let timeInSeconds = CMTimeMakeWithSeconds(time, CMTimeScale(NSEC_PER_SEC))
-        
-        player?.seek(to: timeInSeconds)
-        
-        let generator = AVAssetImageGenerator(asset: AVAsset(url: videoURL))
-        generator.appliesPreferredTrackTransform = true
-        generator.requestedTimeToleranceBefore = kCMTimeZero
-        generator.requestedTimeToleranceAfter = kCMTimeZero
-        
-        do {
-            let cgImage = try generator.copyCGImage(at: timeInSeconds, actualTime: nil)
-            let image = UIImage(cgImage: cgImage)
-            
-            let tooltipImageView = UIImageView(image: image)
-            
-            let tooltipSize = CGSize(width: 100, height: 100)
-            tooltipImageView.frame = CGRect(x: point.x - tooltipSize.width / 2, y: point.y - tooltipSize.height, width: tooltipSize.width, height: tooltipSize.height)
-            
-            view.addSubview(tooltipImageView)
-            
-            UIView.animate(withDuration: 0.2, animations: {
-                tooltipImageView.alpha = 1
-                tooltipImageView.frame.origin.y = point.y - tooltipSize.height
-            })
-        } catch {
-            // Handle any errors related to capturing the video frame
-        }
     }
 }

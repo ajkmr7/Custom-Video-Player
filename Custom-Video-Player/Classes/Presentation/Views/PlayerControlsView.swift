@@ -9,7 +9,10 @@ import SnapKit
     func goBack()
     func sliderValueChanged(slider: UISlider, event: UIEvent)
     func switchSubtitles()
-    func openSettings()
+    func hostWatchParty()
+    func leaveWatchParty()
+    func showParticipants()
+    func copyLink()
 }
 
 // MARK: - Player Controls
@@ -27,8 +30,18 @@ class PlayerControlsView: UIView {
         $0.setImage(VideoPlayerImage.subtitlesButton.uiImage, for: .normal)
     }
     
-    private let moreButton = UIButton().configure {
-        $0.setImage(VideoPlayerImage.moreButton.uiImage, for: .normal)
+    let watchPartyButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.watchPartyButton.uiImage, for: .normal)
+    }
+    
+    let participantsButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.participantsButton.uiImage, for: .normal)
+        $0.isHidden = true
+    }
+    
+    let copyLinkButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.copyLinkButton.uiImage, for: .normal)
+        $0.isHidden = true
     }
     
     // MARK: - Controls on Middle
@@ -173,19 +186,31 @@ extension PlayerControlsView {
     private func setupViews() {
         addSubview(backButton)
         addSubview(subtitleButton)
-        addSubview(moreButton)
+        addSubview(watchPartyButton)
+        addSubview(participantsButton)
+        addSubview(copyLinkButton)
         
         backButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(CGFloat.space24)
             make.leading.equalToSuperview().offset(dynamicSpacing)
         }
         
-        subtitleButton.snp.makeConstraints { make in
+        copyLinkButton.snp.makeConstraints { make in
             make.top.equalTo(backButton.snp.top)
-            make.trailing.equalTo(moreButton.snp.leading).offset(-CGFloat.space8)
+            make.trailing.equalTo(participantsButton.snp.leading).offset(-CGFloat.space8)
         }
         
-        moreButton.snp.makeConstraints { make in
+        participantsButton.snp.makeConstraints { make in
+            make.top.equalTo(backButton.snp.top)
+            make.trailing.equalTo(subtitleButton.snp.leading).offset(-CGFloat.space8)
+        }
+        
+        subtitleButton.snp.makeConstraints { make in
+            make.top.equalTo(backButton.snp.top)
+            make.trailing.equalTo(watchPartyButton.snp.leading).offset(-CGFloat.space8)
+        }
+        
+        watchPartyButton.snp.makeConstraints { make in
             make.top.equalTo(backButton.snp.top)
             make.trailing.equalToSuperview().offset(-dynamicSpacing)
         }
@@ -228,7 +253,7 @@ extension PlayerControlsView {
         
         seekBar.snp.makeConstraints { make in
             make.leading.equalTo(backButton.snp.leading)
-            make.trailing.equalTo(moreButton.snp.trailing)
+            make.trailing.equalTo(watchPartyButton.snp.trailing)
             make.bottom.equalToSuperview().offset(-CGFloat.space24)
             make.height.equalTo(CGFloat.space2)
         }
@@ -239,7 +264,7 @@ extension PlayerControlsView {
         }
         
         totalTimeLabel.snp.makeConstraints { make in
-            make.trailing.equalTo(moreButton.snp.trailing)
+            make.trailing.equalTo(watchPartyButton.snp.trailing)
             make.bottom.equalTo(seekBar.snp.top).offset(-CGFloat.space12)
         }
     }
@@ -255,7 +280,9 @@ extension PlayerControlsView {
         seekBar.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
         backButton.addTarget(self, action: #selector(backButtonTap), for: .touchUpInside)
         subtitleButton.addTarget(self, action: #selector(subtitleButtonTap), for: .touchUpInside)
-        moreButton.addTarget(self, action: #selector(moreButtonTap), for: .touchUpInside)
+        watchPartyButton.addTarget(self, action: #selector(hostWatchPartyButtonTap), for: .touchUpInside)
+        participantsButton.addTarget(self, action: #selector(participantsButtonTap), for: .touchUpInside)
+        copyLinkButton.addTarget(self, action: #selector(copyLinkButtonTap), for: .touchUpInside)
     }
     
     @IBAction private func pausePlay(_: UIButton) {
@@ -278,8 +305,20 @@ extension PlayerControlsView {
         delegate?.switchSubtitles()
     }
     
-    @IBAction private func moreButtonTap(_: UIButton) {
-        delegate?.openSettings()
+    @IBAction func hostWatchPartyButtonTap(_: UIButton) {
+        delegate?.hostWatchParty()
+    }
+    
+    @IBAction func leaveWatchPartyButtonTap(_: UIButton) {
+        delegate?.leaveWatchParty()
+    }
+    
+    @IBAction private func participantsButtonTap(_: UIButton) {
+        delegate?.showParticipants()
+    }
+    
+    @IBAction private func copyLinkButtonTap(_: UIButton) {
+        delegate?.copyLink()
     }
     
     @objc private func onSliderValChanged(slider: UISlider, event: UIEvent) {
@@ -292,5 +331,15 @@ extension PlayerControlsView {
 extension PlayerControlsView {
     func disableSubtitlesButton() {
         subtitleButton.isEnabled = false
+    }
+    
+    func hideWatchPartyFeatureButtons() {
+        participantsButton.isHidden = true
+        copyLinkButton.isHidden = true
+    }
+    
+    func unhideWatchPartyFeatureButtons() {
+        participantsButton.isHidden = false
+        copyLinkButton.isHidden = false
     }
 }
