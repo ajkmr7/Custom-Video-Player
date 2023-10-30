@@ -22,7 +22,7 @@ class PlayerControlsView: UIView {
     
     // MARK: - Controls on Top
     
-    private let backButton = UIButton().configure {
+    let backButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.backButton.uiImage, for: .normal)
     }
     
@@ -297,7 +297,7 @@ extension PlayerControlsView {
         delegate?.seekBackward()
     }
     
-    @IBAction private func backButtonTap(_: UIButton) {
+    @IBAction func backButtonTap(_: UIButton) {
         delegate?.goBack()
     }
     

@@ -6,9 +6,6 @@ import UIKit
 
 extension VideoPlayerViewController: PlayerControlsViewDelegate {
     func goBack() {
-        // TODO: Leave Party
-        // TODO: Remove observers
-        // TODO: Pause Player
         coordinator.navigationController.dismiss(animated: true)
     }
     
@@ -22,6 +19,7 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
     }
     
     func copyLink() {
+        // TODO: Notifiy with a toast when link is copied to clipboard
         UIPasteboard.general.string = viewModel.watchPartyConfig?.partyLink
     }
     
@@ -126,16 +124,24 @@ extension VideoPlayerViewController: SubtitleSelectionDelegate {
 extension VideoPlayerViewController: WatchPartyDelegate {
     func onWatchPartyEntered() {
         playerControlsView.unhideWatchPartyFeatureButtons()
-        playerControlsView.watchPartyButton.setImage(VideoPlayerImage.leaveButton.uiImage, for: .normal)
-        playerControlsView.watchPartyButton.removeTarget(playerControlsView.self, action: #selector(playerControlsView.hostWatchPartyButtonTap(_:)), for: .touchUpInside)
-        playerControlsView.watchPartyButton.addTarget(playerControlsView.self, action: #selector(playerControlsView.leaveWatchPartyButtonTap(_:)), for: .touchUpInside)
+        playerControlsView.watchPartyButton.isEnabled = false
+        playerControlsView.backButton.setImage(VideoPlayerImage.leaveButton.uiImage, for: .normal)
+        playerControlsView.backButton.removeTarget(playerControlsView.self,
+                                                   action: #selector(playerControlsView.backButtonTap),
+                                                   for: .touchUpInside)
+        playerControlsView.backButton.addTarget(playerControlsView.self, action: #selector(playerControlsView.leaveWatchPartyButtonTap(_:)), for: .touchUpInside)
     }
     
     func onWatchPartyExited() {
-        playerControlsView.hideWatchPartyFeatureButtons()
-        playerControlsView.watchPartyButton.setImage(VideoPlayerImage.watchPartyButton.uiImage, for: .normal)
-        playerControlsView.watchPartyButton.removeTarget(playerControlsView.self, action: #selector(playerControlsView.leaveWatchPartyButtonTap(_:)), for: .touchUpInside)
-        playerControlsView.watchPartyButton.addTarget(playerControlsView.self, action: #selector(playerControlsView.hostWatchPartyButtonTap(_:)), for: .touchUpInside)
+        viewModel.watchPartyConfig = nil
+        pausePlayer()
+        goBack()
+    }
+    
+    func onWatchPartyEnded() {
+        viewModel.watchPartyConfig = nil
+        pausePlayer()
+        coordinator.navigationController.presentedViewController?.present(watchPartyEndedAlert, animated: true, completion: nil)
     }
     
     func onPlayerStateUpdated() {
@@ -152,8 +158,11 @@ extension VideoPlayerViewController: WatchPartyDelegate {
     }
     
     func onParticipantsUpdated() {
-        guard let currentTime = player?.currentItem?.currentTime() else { return }
-        viewModel.updateCurrentTime(currentTime.durationText, Float(currentTime.seconds))
+        // TODO: Notifiy with a toast whenever a new participant joins/leaves
+        if let isHost = viewModel.watchPartyConfig?.isHost, isHost {
+            guard let currentTime = player?.currentItem?.currentTime() else { return }
+            viewModel.updateCurrentTime(currentTime.durationText, Float(currentTime.seconds))
+        }
     }
 }
 

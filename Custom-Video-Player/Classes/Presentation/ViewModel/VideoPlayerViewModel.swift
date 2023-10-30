@@ -9,6 +9,7 @@ enum PlayerState {
 protocol WatchPartyDelegate: AnyObject {
     func onWatchPartyEntered()
     func onWatchPartyExited()
+    func onWatchPartyEnded()
     func onPlayerStateUpdated()
     func onCurrentTimeUpdated(_ currentTimeDurationText: String, _ currentTimeInSeconds: Float)
     func onParticipantsUpdated()
@@ -77,12 +78,11 @@ public class VideoPlayerViewModel {
     }
 }
 
-// TODO: Refactor by segregating network logic
-
 extension VideoPlayerViewModel {
     func hostParty(for host: String, currentTime: CMTime?) {
         watchPartyConfig?.partyID = RandomUUIDGenerator.generateRandomUUID(length: 6)
         watchPartyConfig?.userID = RandomUUIDGenerator.generateRandomUUID(length: 12)
+        watchPartyConfig?.isHost = true
         if let partyID = watchPartyConfig?.partyID {
             watchPartyConfig?.partyLink = Environment.shared.getWatchPartyDeeplink(partyID)
         }
@@ -110,6 +110,7 @@ extension VideoPlayerViewModel {
     
     func joinParty(for participant: String) {
         watchPartyConfig?.userID = RandomUUIDGenerator.generateRandomUUID(length: 12)
+        watchPartyConfig?.isHost = false
         guard let partyID = watchPartyConfig?.partyID, let userID = watchPartyConfig?.userID else { return }
         setupWatchPartyObservers()
         let newParticipant: [String: String] = [
@@ -122,8 +123,6 @@ extension VideoPlayerViewModel {
     }
 
     func leaveParty() {
-        // TODO: Remove observers
-        // TODO: Pause Player
         guard let partyID = watchPartyConfig?.partyID, let userID = watchPartyConfig?.userID else { return }
 
         self.ref.child("parties").child(partyID).observeSingleEvent(of: .value) { [weak self] (snapshot) in
@@ -189,9 +188,21 @@ extension VideoPlayerViewModel {
     }
     
     func setupWatchPartyObservers() {
+        setupPartyObserver()
         setupPlayerStateObserver()
         setupCurrentTimeObserver()
         setupParticipantsObserver()
+    }
+    
+    private func setupPartyObserver() {
+        guard let partyID = watchPartyConfig?.partyID else { return }
+        let partiesRef = self.ref.child("parties")
+
+        partiesRef.observe(.value, with: { [weak self] snapshot in
+            if !snapshot.hasChild(partyID), let isHost = self?.watchPartyConfig?.isHost, !isHost {
+                self?.watchPartyDelegate?.onWatchPartyEnded()
+            }
+        })
     }
     
     private func setupPlayerStateObserver() {
@@ -220,7 +231,6 @@ extension VideoPlayerViewModel {
     }
     
     private func setupParticipantsObserver() {
-        // TODO: Notifiy inside AVPlayer
         guard let partyID = watchPartyConfig?.partyID else { return }
         ref.child("parties").child(partyID).child("participants").observe(.value) { [weak self] (snapshot) in
             if snapshot.value is [String: Any] {

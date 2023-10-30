@@ -17,7 +17,7 @@ public class VideoPlayerViewController: UIViewController {
     var subtitleSelectionView: SubtitleSelectionViewController?
     var participantsView: ParticipantsViewController?
     let hostWatchPartyAlert = UIAlertController(
-        title: "Let’s get the party started",
+        title: "Let’s get the party started 🥳",
         message: "Watch and chat with your friends and family.",
         preferredStyle: .alert
     ).configure {
@@ -28,6 +28,11 @@ public class VideoPlayerViewController: UIViewController {
     let leaveWatchPartyAlert = UIAlertController(
         title: "Exit Party",
         message: "Are you sure you want to exit the watch party?",
+        preferredStyle: .alert
+    )
+    let watchPartyEndedAlert = UIAlertController(
+        title: "Party Ended😕",
+        message: "Oops! The host has ended the party.",
         preferredStyle: .alert
     )
     private let notification = NotificationCenter.default
@@ -77,6 +82,7 @@ public class VideoPlayerViewController: UIViewController {
     }
     
     @objc func appMovedToBackground() {
+        viewModel.updatePlayerState()
         pausePlayer()
     }
     
@@ -125,6 +131,7 @@ extension VideoPlayerViewController {
         setupSubtiteSelectionView()
         setupHostWatchPartyAlertView()
         setupLeaveWatchPartyAlertView()
+        setupWatchPartyEndedAlertView()
         if viewModel.watchPartyConfig?.partyID != nil {
             onWatchPartyEntered()
         }
@@ -162,6 +169,12 @@ extension VideoPlayerViewController {
             self?.viewModel.leaveParty()
         })
         leaveWatchPartyAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+    }
+    
+    private func setupWatchPartyEndedAlertView() {
+        watchPartyEndedAlert.addAction(UIAlertAction(title: "Exit", style: .default) { [weak self] _ in
+            self?.goBack()
+        })
     }
     
     private func setupGestureRecognizers() {
