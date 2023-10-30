@@ -60,6 +60,8 @@ class PlayerControlsView: UIView {
     
     // MARK: - Controls on Bottom
     
+    private let notificationView = UIView()
+    
     private let titleLabel = UILabel().configure {
         $0.font = FontUtility.helveticaNeueRegular(ofSize: 20)
         $0.textColor = VideoPlayerColor(palette: .white).uiColor
@@ -233,11 +235,20 @@ extension PlayerControlsView {
             make.leading.equalTo(playPauseButton.snp.trailing).offset(CGFloat.space16)
         }
         
+        addSubview(notificationView)
+        sendSubviewToBack(notificationView)
         addSubview(titleLabel)
         addSubview(subtitleLabel)
         addSubview(seekBar)
         addSubview(currentTimeLabel)
         addSubview(totalTimeLabel)
+        
+        notificationView.snp.makeConstraints { make in
+            make.top.equalTo(backButton.snp.bottom).offset(CGFloat.space4)
+            make.bottom.equalTo(titleLabel.snp.top).offset(-CGFloat.space8)
+            make.leading.equalTo(seekBar.snp.leading)
+            make.trailing.equalTo(seekBar.snp.trailing)
+        }
         
         titleLabel.snp.makeConstraints { make in
             make.bottom.equalTo(subtitleLabel.snp.top).offset(-CGFloat.space4)
@@ -341,5 +352,9 @@ extension PlayerControlsView {
     func unhideWatchPartyFeatureButtons() {
         participantsButton.isHidden = false
         copyLinkButton.isHidden = false
+    }
+    
+    func displayPlayerNotification(style: ToastStyle, message: String) {
+        notificationView.displayToast(style: style, message: message)
     }
 }

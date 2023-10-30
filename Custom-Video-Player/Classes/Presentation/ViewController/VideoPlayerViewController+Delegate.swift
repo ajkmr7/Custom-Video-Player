@@ -19,13 +19,11 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
     }
     
     func copyLink() {
-        // TODO: Notifiy with a toast when link is copied to clipboard
+        playerControlsView.displayPlayerNotification(style: .success, message: "Party link has been successfully copied 🎉")
         UIPasteboard.general.string = viewModel.watchPartyConfig?.partyLink
     }
     
     func switchSubtitles() {
-        invalidateControlsHiddenTimer()
-        pausePlayer()
         guard let subtitleSelectionView = subtitleSelectionView else { return }
         coordinator.navigationController.presentedViewController?.present(subtitleSelectionView, animated: true)
     }
@@ -157,8 +155,19 @@ extension VideoPlayerViewController: WatchPartyDelegate {
         }
     }
     
+    func onParticipantAdded(_ participantName: String) {
+        onParticipantsUpdated()
+        self.showControls()
+        self.playerControlsView.displayPlayerNotification(style: .success, message: "\(participantName) has joined the party!")
+    }
+    
+    func onParticipantRemoved(_ participantName: String) {
+        onParticipantsUpdated()
+        self.showControls()
+        self.playerControlsView.displayPlayerNotification(style: .error, message:  "\(participantName) has left the party!")
+    }
+    
     func onParticipantsUpdated() {
-        // TODO: Notifiy with a toast whenever a new participant joins/leaves
         if let isHost = viewModel.watchPartyConfig?.isHost, isHost {
             guard let currentTime = player?.currentItem?.currentTime() else { return }
             viewModel.updateCurrentTime(currentTime.durationText, Float(currentTime.seconds))

@@ -12,7 +12,8 @@ protocol WatchPartyDelegate: AnyObject {
     func onWatchPartyEnded()
     func onPlayerStateUpdated()
     func onCurrentTimeUpdated(_ currentTimeDurationText: String, _ currentTimeInSeconds: Float)
-    func onParticipantsUpdated()
+    func onParticipantAdded(_ participantName: String)
+    func onParticipantRemoved(_ participantName: String)
 }
 
 public class VideoPlayerViewModel {
@@ -232,10 +233,18 @@ extension VideoPlayerViewModel {
     
     private func setupParticipantsObserver() {
         guard let partyID = watchPartyConfig?.partyID else { return }
-        ref.child("parties").child(partyID).child("participants").observe(.value) { [weak self] (snapshot) in
-            if snapshot.value is [String: Any] {
-                self?.watchPartyDelegate?.onParticipantsUpdated()
+        let participantsRef = ref.child("parties").child(partyID).child("participants")
+        
+        participantsRef.observe(.childAdded, with: { [weak self] (snapshot) in
+            if snapshot.key != self?.watchPartyConfig?.userID, let participantData = snapshot.value as? [String: Any], let participantName = participantData["username"] as? String {
+                self?.watchPartyDelegate?.onParticipantAdded(participantName)
             }
-        }
+        })
+        
+        participantsRef.observe(.childRemoved, with: { [weak self] (snapshot) in
+            if snapshot.key != self?.watchPartyConfig?.userID, let participantData = snapshot.value as? [String: Any], let participantName = participantData["username"] as? String {
+                self?.watchPartyDelegate?.onParticipantRemoved(participantName)
+            }
+        })
     }
 }
