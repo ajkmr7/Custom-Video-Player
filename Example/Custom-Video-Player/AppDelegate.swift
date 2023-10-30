@@ -64,9 +64,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        if let rootViewController = topViewControllerWithRootViewController(rootViewController: window?.rootViewController), rootViewController.responds(to: Selector("shouldForceLandscape")) {
-            // Unlock landscape view orientations for this view controller
-            return .landscape
+        if let rootViewController = topViewControllerWithRootViewController(rootViewController: window?.rootViewController) {
+            if rootViewController.responds(to: Selector("shouldForceLandscape")) {
+                // Unlock landscape view orientations for this view controller
+                return .landscape
+            } else if rootViewController.responds(to: Selector("enableAllOrientations")) {
+                // Unlock all view orientations for this view controller
+                return .all
+            }
         }
         return .portrait
     }
