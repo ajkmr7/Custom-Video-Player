@@ -155,8 +155,12 @@ extension VideoPlayerViewController {
             if let textField = self?.hostWatchPartyAlert.textFields?.first {
                 if let chatName = textField.text, !chatName.isEmpty {
                     self?.viewModel.hostParty(for: chatName, currentTime: self?.player?.currentItem?.currentTime())
+                    self?.showControls()
+                    self?.playerControlsView.displayPlayerNotification(style: .success, message:  "You have successfully hosted a watch party 🥳")
                 } else {
                     self?.viewModel.hostParty(for: "Host", currentTime: self?.player?.currentItem?.currentTime())
+                    self?.showControls()
+                    self?.playerControlsView.displayPlayerNotification(style: .success, message:  "You have successfully hosted a watch party 🥳")
                 }
             }
         })
@@ -242,7 +246,7 @@ extension VideoPlayerViewController {
         playerControlsView.isHidden ? showControls() : hideControls()
     }
     
-    private func showControls() {
+    func showControls() {
         playerControlsView.isHidden = false
         
         UIView.animate(withDuration: 0.25) {
@@ -251,7 +255,7 @@ extension VideoPlayerViewController {
         resetControlsHiddenTimer()
     }
     
-    @objc func hideControls() {
+    func hideControls() {
         UIView.animate(withDuration: 0.25) {
             self.playerControlsView.alpha = 0
         } completion: { _ in
