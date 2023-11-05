@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'Custom-Video-Player'
   s.version          = '0.0.1'
-  s.summary          = 'A custom video player with subtitle selection support for iOS as of now.'
+  s.summary          = 'A video player with custom playback controls, subtitle selection, and video quality selection support for iOS as of now.'
 
 
   s.homepage         = 'https://github.com/ajkmr7/Custom-Video-Player'
