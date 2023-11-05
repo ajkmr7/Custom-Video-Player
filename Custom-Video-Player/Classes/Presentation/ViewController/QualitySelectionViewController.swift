@@ -2,13 +2,13 @@ import AVFoundation
 import SnapKit
 import UIKit
 
-protocol SubtitleSelectionDelegate: AnyObject {
-    func onSubtitleTrackSelected(subtitleTrack: AVMediaSelectionOption?)
+protocol QualitySelectionDelegate: AnyObject {
+    func onQualitySettingSelected(didSelectRowAt index: Int)
     func onDismissed()
 }
 
-class SubtitleSelectionViewController: UIViewController {
-    private static let cellIdentifier = "SubtitleCell"
+class QualitySelectionViewController: UIViewController {
+    private static let cellIdentifier = "QualityCell"
     
     private let popOverView = UIView().configure {
         $0.backgroundColor = VideoPlayerColor(palette: .black).uiColor
@@ -28,7 +28,7 @@ class SubtitleSelectionViewController: UIViewController {
     
     private let header = UILabel().configure {
         $0.textColor = VideoPlayerColor(palette: .pearlWhite).uiColor
-        $0.text = "Subtitle"
+        $0.text = "Qualities"
         $0.font = FontUtility.helveticaNeueMedium(ofSize: 16)
     }
     
@@ -40,10 +40,10 @@ class SubtitleSelectionViewController: UIViewController {
         return .landscape
     }
     
-    weak var delegate: SubtitleSelectionDelegate?
-    private let viewModel: SubtitleSelectionViewModel
+    weak var delegate: QualitySelectionDelegate?
+    private let viewModel: QualitySelectionViewModel
     
-    init(viewModel: SubtitleSelectionViewModel) {
+    init(viewModel: QualitySelectionViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -117,7 +117,7 @@ class SubtitleSelectionViewController: UIViewController {
             make.leading.equalToSuperview().offset(CGFloat.space24)
             make.trailing.equalToSuperview().offset(-CGFloat.space24)
             make.bottom.equalToSuperview().offset(-CGFloat.space8)
-            make.height.equalTo(CGFloat.space128)
+            make.height.equalTo(240)
         }
     }
     
@@ -127,16 +127,16 @@ class SubtitleSelectionViewController: UIViewController {
     }
 }
 
-extension SubtitleSelectionViewController: UITableViewDataSource, UITableViewDelegate {
+extension QualitySelectionViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return viewModel.subtitleOptionsCount
+        return viewModel.supportedResolutions.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: SubtitleSelectionViewController.cellIdentifier, for: indexPath) as! SelectionCellView
-        let subtitleLanguage = viewModel.subtitleOption(indexPath.row)
+        let cell = tableView.dequeueReusableCell(withIdentifier: QualitySelectionViewController.cellIdentifier, for: indexPath) as! SelectionCellView
+        let qualitySetting = viewModel.supportedResolutions[indexPath.row]
         let isSelected = indexPath.row == viewModel.selectedItemIndex
-        cell.configureCell(title: subtitleLanguage, isSelected: isSelected)
+        cell.configureCell(title: qualitySetting, isSelected: isSelected)
         cell.selectionStyle = .none
         return cell
     }
@@ -144,10 +144,10 @@ extension SubtitleSelectionViewController: UITableViewDataSource, UITableViewDel
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.selectedItemIndex = indexPath.row
         tableView.reloadData()
-        delegate?.onSubtitleTrackSelected(subtitleTrack: viewModel.subtitleTrack)
+        delegate?.onQualitySettingSelected(didSelectRowAt: indexPath.row)
         dismissView()
     }
-    
+
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
         return CGFloat.space38
     }

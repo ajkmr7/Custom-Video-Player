@@ -34,7 +34,15 @@ class ViewController: UIViewController {
             videos: [
                 Video(
                     url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-                    title: "Video"
+                    title: "Video 1"
+                ),
+                Video(
+                    url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+                    title: "Video 2"
+                ),
+                Video(
+                    url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+                    title: "Video 3"
                 )
             ]
         )

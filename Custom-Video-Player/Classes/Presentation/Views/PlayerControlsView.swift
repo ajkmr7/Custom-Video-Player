@@ -6,6 +6,8 @@ import SnapKit
     func seekForward()
     func seekBackward()
     func togglePlayPause()
+    func playPreviousVideo()
+    func playNextVideo()
     func goBack()
     func sliderValueChanged(slider: UISlider, event: UIEvent)
     func switchSubtitles()
@@ -27,11 +29,15 @@ class PlayerControlsView: UIView {
         $0.setImage(VideoPlayerImage.subtitlesButton.uiImage, for: .normal)
     }
     
-    private let moreButton = UIButton().configure {
-        $0.setImage(VideoPlayerImage.moreButton.uiImage, for: .normal)
+    private let settingsButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.settingsButton.uiImage, for: .normal)
     }
     
     // MARK: - Controls on Middle
+    
+    private let previousVideoButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.previousVideoButton.uiImage, for: .normal)
+    }
     
     private let rewindButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.rewindButton.uiImage, for: .normal)
@@ -43,6 +49,10 @@ class PlayerControlsView: UIView {
     
     private let forwardButton = UIButton().configure {
         $0.setImage(VideoPlayerImage.forwardButton.uiImage, for: .normal)
+    }
+    
+    private let nextVideoButton = UIButton().configure {
+        $0.setImage(VideoPlayerImage.nextVideoButton.uiImage, for: .normal)
     }
     
     // MARK: - Controls on Bottom
@@ -147,6 +157,24 @@ class PlayerControlsView: UIView {
         }
     }
     
+    var previousVideoButtonState: Bool {
+        get {
+            previousVideoButton.isEnabled
+        }
+        set(newValue) {
+            previousVideoButton.isEnabled = newValue
+        }
+    }
+    
+    var nextVideoButtonState: Bool {
+        get {
+            nextVideoButton.isEnabled
+        }
+        set(newValue) {
+            nextVideoButton.isEnabled = newValue
+        }
+    }
+    
     var isPlaying: Bool = false {
         didSet {
             playPauseButtonImage = isPlaying ? VideoPlayerImage.pauseButton.uiImage : VideoPlayerImage.playButton.uiImage
@@ -173,7 +201,7 @@ extension PlayerControlsView {
     private func setupViews() {
         addSubview(backButton)
         addSubview(subtitleButton)
-        addSubview(moreButton)
+        addSubview(settingsButton)
         
         backButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(CGFloat.space24)
@@ -182,17 +210,24 @@ extension PlayerControlsView {
         
         subtitleButton.snp.makeConstraints { make in
             make.top.equalTo(backButton.snp.top)
-            make.trailing.equalTo(moreButton.snp.leading).offset(-CGFloat.space8)
+            make.trailing.equalTo(settingsButton.snp.leading).offset(-CGFloat.space8)
         }
         
-        moreButton.snp.makeConstraints { make in
+        settingsButton.snp.makeConstraints { make in
             make.top.equalTo(backButton.snp.top)
             make.trailing.equalToSuperview().offset(-dynamicSpacing)
         }
         
+        addSubview(previousVideoButton)
         addSubview(rewindButton)
         addSubview(playPauseButton)
         addSubview(forwardButton)
+        addSubview(nextVideoButton)
+        
+        previousVideoButton.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(rewindButton.snp.leading).offset(-CGFloat.space16)
+        }
         
         rewindButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -206,6 +241,11 @@ extension PlayerControlsView {
         forwardButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(playPauseButton.snp.trailing).offset(CGFloat.space16)
+        }
+        
+        nextVideoButton.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(forwardButton.snp.trailing).offset(CGFloat.space16)
         }
         
         addSubview(titleLabel)
@@ -228,7 +268,7 @@ extension PlayerControlsView {
         
         seekBar.snp.makeConstraints { make in
             make.leading.equalTo(backButton.snp.leading)
-            make.trailing.equalTo(moreButton.snp.trailing)
+            make.trailing.equalTo(settingsButton.snp.trailing)
             make.bottom.equalToSuperview().offset(-CGFloat.space24)
             make.height.equalTo(CGFloat.space2)
         }
@@ -239,7 +279,7 @@ extension PlayerControlsView {
         }
         
         totalTimeLabel.snp.makeConstraints { make in
-            make.trailing.equalTo(moreButton.snp.trailing)
+            make.trailing.equalTo(settingsButton.snp.trailing)
             make.bottom.equalTo(seekBar.snp.top).offset(-CGFloat.space12)
         }
     }
@@ -252,10 +292,12 @@ extension PlayerControlsView {
         playPauseButton.addTarget(self, action: #selector(pausePlay), for: .touchUpInside)
         forwardButton.addTarget(self, action: #selector(doForwardJump), for: .touchUpInside)
         rewindButton.addTarget(self, action: #selector(doBackwardJump), for: .touchUpInside)
+        previousVideoButton.addTarget(self, action: #selector(playPreviousVideo), for: .touchUpInside)
+        nextVideoButton.addTarget(self, action: #selector(playNextVideo), for: .touchUpInside)
         seekBar.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
         backButton.addTarget(self, action: #selector(backButtonTap), for: .touchUpInside)
         subtitleButton.addTarget(self, action: #selector(subtitleButtonTap), for: .touchUpInside)
-        moreButton.addTarget(self, action: #selector(moreButtonTap), for: .touchUpInside)
+        settingsButton.addTarget(self, action: #selector(settingsButtonTap), for: .touchUpInside)
     }
     
     @IBAction private func pausePlay(_: UIButton) {
@@ -270,6 +312,14 @@ extension PlayerControlsView {
         delegate?.seekBackward()
     }
     
+    @IBAction private func playPreviousVideo(_: UIButton) {
+        delegate?.playPreviousVideo()
+    }
+    
+    @IBAction private func playNextVideo(_: UIButton) {
+        delegate?.playNextVideo()
+    }
+    
     @IBAction private func backButtonTap(_: UIButton) {
         delegate?.goBack()
     }
@@ -278,7 +328,7 @@ extension PlayerControlsView {
         delegate?.switchSubtitles()
     }
     
-    @IBAction private func moreButtonTap(_: UIButton) {
+    @IBAction private func settingsButtonTap(_: UIButton) {
         delegate?.openSettings()
     }
     
@@ -292,5 +342,13 @@ extension PlayerControlsView {
 extension PlayerControlsView {
     func disableSubtitlesButton() {
         subtitleButton.isEnabled = false
+    }
+    
+    func unhideSettingsButton() {
+        settingsButton.isHidden = false
+    }
+
+    func hideSettingsButton() {
+        settingsButton.isHidden = true
     }
 }

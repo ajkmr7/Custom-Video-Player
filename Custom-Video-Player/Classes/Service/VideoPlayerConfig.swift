@@ -1,5 +1,5 @@
 public struct VideoPlayerConfig {
-    let playlist: VideoPlaylist
+    var playlist: VideoPlaylist
     
     public init(playlist: VideoPlaylist) {
         self.playlist = playlist

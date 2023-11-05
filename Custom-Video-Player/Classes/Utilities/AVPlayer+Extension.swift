@@ -8,4 +8,8 @@ extension AVPlayer {
         }
         return mediaSelectionGroup.options.filter { $0.extendedLanguageTag != nil }
     }
+    
+    func setStreamBitrate(bitrate: Double?) {
+        currentItem?.preferredPeakBitRate = bitrate ?? Double.greatestFiniteMagnitude
+    }
 }

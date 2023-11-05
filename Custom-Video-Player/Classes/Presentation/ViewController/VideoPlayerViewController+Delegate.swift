@@ -17,7 +17,15 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
     }
     
     func openSettings() {
-        // TODO: Implement settings functionality
+        invalidateControlsHiddenTimer()
+        pausePlayer()
+        guard let qualitySelectionView = qualitySelectionView else { return }
+        coordinator.navigationController.presentedViewController?.present(qualitySelectionView, animated: true)
+    }
+    
+    func playPreviousVideo() {
+        let currentVideoIndex = viewModel.config.playlist.currentVideoIndex ?? 0
+        resetPlayer(with: currentVideoIndex - 1)
     }
     
     func seekBackward() {
@@ -58,6 +66,11 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
         }
     }
     
+    func playNextVideo() {
+        let currentVideoIndex = viewModel.config.playlist.currentVideoIndex ?? 0
+        resetPlayer(with: currentVideoIndex + 1)
+    }
+    
     func sliderValueChanged(slider: UISlider, event: UIEvent) {
         var pauseTime: CMTime = CMTime.zero
         guard let player = player else { return }
@@ -94,5 +107,25 @@ extension VideoPlayerViewController: SubtitleSelectionDelegate {
     func onDismissed() {
         resumePlayer()
         resetControlsHiddenTimer()
+    }
+}
+
+// MARK: - Quality Settings Functionality
+
+extension VideoPlayerViewController: QualitySelectionDelegate {
+    func onQualitySettingSelected(didSelectRowAt index: Int) {
+        player?.setStreamBitrate(bitrate: viewModel.fetchPlaybackBitrate(for: index))
+    }
+}
+
+// MARK: - Video Quality Settings Functionality
+
+extension VideoPlayerViewController: VideoPlayerDelegate {
+    func didFinishFetchingVideoQualityInformationWithSuccess() {
+        setupQualitySelectionView()
+    }
+    
+    func didFinishFetchingVideoQualityInformationWithFailure() {
+        playerControlsView.hideSettingsButton()
     }
 }

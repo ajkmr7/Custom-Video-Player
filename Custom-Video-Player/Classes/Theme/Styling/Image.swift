@@ -7,6 +7,9 @@ enum VideoPlayerImage: String, CaseIterable, NameableAsset {
     case replayButton = "replay_button"
     case rewindButton = "rewind_button"
     case subtitlesButton = "subtitles_button"
+    case settingsButton = "settings_button"
+    case previousVideoButton = "previousvideo_button"
+    case nextVideoButton = "nextvideo_button"
 
     var uiImage: UIImage { UIImage(self, resourceBundle: CustomVideoPlayer.resourceBundle) }
 }
