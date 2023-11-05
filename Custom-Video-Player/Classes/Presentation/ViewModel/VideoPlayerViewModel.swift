@@ -33,9 +33,9 @@ public class VideoPlayerViewModel {
         let newTime = playerCurrentTime + seekDuration
         
         if newTime < CMTimeGetSeconds(duration) {
-            return CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
+            return CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
         }
-        return CMTimeMake(Int64(CMTimeGetSeconds(duration) * 1000 as Float64), 1000)
+        return CMTimeMake(value: Int64(CMTimeGetSeconds(duration) * 1000 as Float64), timescale: 1000)
     }
     
     func getBackwardTime(currentTime: CMTime) -> CMTime? {
@@ -45,7 +45,7 @@ public class VideoPlayerViewModel {
         if newTime < 0 {
             newTime = 0
         }
-        return CMTimeMake(Int64(newTime * 1000 as Float64), 1000)
+        return CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
     }
     
     func getFormattedTime(totalDuration: Double) -> String {

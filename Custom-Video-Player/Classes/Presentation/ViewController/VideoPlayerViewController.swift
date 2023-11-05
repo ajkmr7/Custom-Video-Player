@@ -53,7 +53,7 @@ public class VideoPlayerViewController: UIViewController {
         super.viewDidLoad()
         resetOrientation(UIInterfaceOrientationMask.landscapeRight)
         UIViewController.attemptRotationToDeviceOrientation()
-        notification.addObserver(self, selector: #selector(appMovedToBackground), name: .UIApplicationDidEnterBackground, object: nil)
+        notification.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         setupPlayer()
     }
     
@@ -215,40 +215,5 @@ extension VideoPlayerViewController {
     
     @objc private func hideControlsDueToInactivity() {
         hideControls()
-    }
-}
-
-// MARK: - Show Tooltip Functionality
-
-extension VideoPlayerViewController {
-    func showTooltip(at point: CGPoint, time: Double) {
-        guard let videoURL = viewModel.url else { return }
-        let timeInSeconds = CMTimeMakeWithSeconds(time, CMTimeScale(NSEC_PER_SEC))
-        
-        player?.seek(to: timeInSeconds)
-        
-        let generator = AVAssetImageGenerator(asset: AVAsset(url: videoURL))
-        generator.appliesPreferredTrackTransform = true
-        generator.requestedTimeToleranceBefore = kCMTimeZero
-        generator.requestedTimeToleranceAfter = kCMTimeZero
-        
-        do {
-            let cgImage = try generator.copyCGImage(at: timeInSeconds, actualTime: nil)
-            let image = UIImage(cgImage: cgImage)
-            
-            let tooltipImageView = UIImageView(image: image)
-            
-            let tooltipSize = CGSize(width: 100, height: 100)
-            tooltipImageView.frame = CGRect(x: point.x - tooltipSize.width / 2, y: point.y - tooltipSize.height, width: tooltipSize.width, height: tooltipSize.height)
-            
-            view.addSubview(tooltipImageView)
-            
-            UIView.animate(withDuration: 0.2, animations: {
-                tooltipImageView.alpha = 1
-                tooltipImageView.frame.origin.y = point.y - tooltipSize.height
-            })
-        } catch {
-            // Handle any errors related to capturing the video frame
-        }
     }
 }

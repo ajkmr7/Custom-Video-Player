@@ -26,7 +26,7 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
         else {
             return
         }
-        player.seek(to: seekToTime, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero) { [weak self] _ in
+        player.seek(to: seekToTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { [weak self] _ in
             guard let self = self else { return }
             guard let currentTime = player.currentItem?.currentTime() else { return }
             self.playerControlsView.seekBarValue = Float(currentTime.seconds)
@@ -50,7 +50,7 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
         else {
             return
         }
-        player.seek(to: seekToTime, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero) { [weak self] _ in
+        player.seek(to: seekToTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { [weak self] _ in
             guard let self = self else { return }
             guard let currentTime = player.currentItem?.currentTime() else { return }
             self.playerControlsView.seekBarValue = Float(currentTime.seconds)
@@ -59,7 +59,7 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
     }
     
     func sliderValueChanged(slider: UISlider, event: UIEvent) {
-        var pauseTime: CMTime = kCMTimeZero
+        var pauseTime: CMTime = CMTime.zero
         guard let player = player else { return }
         if let touchEvent = event.allTouches?.first {
             switch touchEvent.phase {
@@ -69,14 +69,10 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
                 pauseTime = currentTime
                 invalidateControlsHiddenTimer()
             case .moved:
-                let seekingCM = CMTimeMake(Int64(slider.value * Float(pauseTime.timescale)), pauseTime.timescale)
-                let thumbRect = slider.thumbRect(forBounds: slider.bounds, trackRect: slider.trackRect(forBounds: slider.bounds), value: slider.value)
-                let thumbCenterX = thumbRect.origin.x + thumbRect.size.width / 2
-                let pointOnSlider = CGPoint(x: thumbCenterX, y: slider.frame.origin.y - 20)
-                showTooltip(at: pointOnSlider, time: seekingCM.seconds)
+                break
             case .ended:
                 resetControlsHiddenTimer()
-                let seekingCM = CMTimeMake(Int64(slider.value * Float(pauseTime.timescale)), pauseTime.timescale)
+                let seekingCM = CMTimeMake(value: Int64(slider.value * Float(pauseTime.timescale)), timescale: pauseTime.timescale)
                 player.seek(to: seekingCM)
                 /// Retain video player state on seeking: whenever the user interacts with the seek bar, we pause the player internally to calculate the new time. So, once the seek bar action is completed, we would need to retain the original playback state of the player.
                 viewModel.playerState == .play ? player.play() : player.pause()
