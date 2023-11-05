@@ -15,6 +15,7 @@ public class VideoPlayerViewController: UIViewController {
     var playerItem: AVPlayerItem?
     let playerControlsView = PlayerControlsView()
     var subtitleSelectionView: SubtitleSelectionViewController?
+    var qualitySelectionView: QualitySelectionViewController?
     private let notification = NotificationCenter.default
     
     // Custom Subtitle Styling
@@ -90,6 +91,7 @@ extension VideoPlayerViewController {
         }
         player = AVPlayer(playerItem: playerItem)
         addObservers()
+        fetchSupportedQualities()
         playerLayer = AVPlayerLayer(player: player)
         guard let playerLayer = playerLayer else { return }
         view.backgroundColor = .black
@@ -101,6 +103,8 @@ extension VideoPlayerViewController {
         playerControlsView.totalTimeLabelText = viewModel.getFormattedTime(totalDuration: totalDuration.seconds)
         playerControlsView.titleLabelText = viewModel.titleLabelText
         playerControlsView.subtitleLabelText = viewModel.subtitleLabelText
+        playerControlsView.previousVideoButtonState = viewModel.isPreviousButtonEnabled
+        playerControlsView.nextVideoButtonState = viewModel.isNextButtonEnabled
         view.addSubview(playerControlsView)
         playerControlsView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -117,6 +121,15 @@ extension VideoPlayerViewController {
         }
         subtitleSelectionView = SubtitleSelectionViewController(viewModel: .init(supportedLanguages: supportedLanguages))
         subtitleSelectionView?.delegate = self
+    }
+    
+    func setupQualitySelectionView() {
+        guard let playbackQualityStrings = viewModel.playbackQualityStrings, !playbackQualityStrings.isEmpty else {
+            return
+        }
+        playerControlsView.unhideSettingsButton()
+        qualitySelectionView = QualitySelectionViewController(viewModel: .init(supportedResolutions: playbackQualityStrings))
+        qualitySelectionView?.delegate = self
     }
     
     private func setupGestureRecognizers() {
@@ -136,6 +149,11 @@ extension VideoPlayerViewController {
         player?.play()
         playerControlsView.playPauseButtonImage = VideoPlayerImage.pauseButton.uiImage
         viewModel.playerState = .play
+    }
+    
+    private func fetchSupportedQualities() {
+        viewModel.delegate = self
+        viewModel.fetchSupportedVideoQualites()
     }
 }
 
@@ -215,5 +233,33 @@ extension VideoPlayerViewController {
     
     @objc private func hideControlsDueToInactivity() {
         hideControls()
+    }
+}
+
+// MARK: - Reset Player
+
+extension VideoPlayerViewController {
+    func resetPlayer(with currentVideoIndex: Int) {
+        resetPlayerItems()
+        viewModel.config.playlist.currentVideoIndex = currentVideoIndex
+        resetControlsHiddenTimer()
+        playerControlsView.seekBarValue = 0
+        playerControlsView.currentTimeLabelText = "00:00"
+        setupPlayer()
+        resumePlayer()
+    }
+    
+    private func resetPlayerItems() {
+        hideControls()
+        didSetupControls = false
+        disableGestureRecognizers()
+        player?.replaceCurrentItem(with: nil)
+        playerItem = nil
+        playerLayer = nil
+        viewModel.playerState = .pause
+    }
+    
+    private func disableGestureRecognizers() {
+        view.gestureRecognizers?.removeAll()
     }
 }

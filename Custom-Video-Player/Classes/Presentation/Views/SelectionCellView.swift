@@ -1,7 +1,7 @@
 import SnapKit
 import UIKit
 
-class SubtitleCellView: UITableViewCell {
+class SelectionCellView: UITableViewCell {
     private let subtitleLanguage = UILabel().configure {
         $0.textColor = VideoPlayerColor(palette: .white).uiColor
         $0.font = FontUtility.helveticaNeueRegular(ofSize: 12)
