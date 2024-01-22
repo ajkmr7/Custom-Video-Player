@@ -24,6 +24,11 @@ public class VideoPlayerViewModel {
         return URL(string: url)
     }
     
+    var isLiveContent: Bool? {
+        guard let videos = config.playlist.videos, videos.count > 0, let isLiveContent = videos[config.playlist.currentVideoIndex ?? 0].isLiveContent else { return nil }
+        return isLiveContent
+    }
+    
     var isPreviousButtonEnabled: Bool {
         let currentVideoIndex = config.playlist.currentVideoIndex ?? 0
         if currentVideoIndex - 1 >= 0 {

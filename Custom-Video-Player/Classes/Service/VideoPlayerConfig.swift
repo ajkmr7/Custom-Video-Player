@@ -21,9 +21,11 @@ public struct VideoPlaylist {
 public struct Video {
     let url: String?
     let title: String?
+    let isLiveContent: Bool?
     
-    public init(url: String?, title: String? = nil) {
+    public init(url: String?, title: String? = nil, isLiveContent: Bool? = false) {
         self.url = url
         self.title = title
+        self.isLiveContent = isLiveContent
     }
 }

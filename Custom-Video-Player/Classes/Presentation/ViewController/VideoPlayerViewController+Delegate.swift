@@ -49,6 +49,8 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
         case .pause:
             resumePlayer()
         }
+        guard let isLiveContent = viewModel.isLiveContent, isLiveContent else { return }
+        playerControlsView.updateLiveState(with: false)
     }
     
     func seekForward() {
@@ -73,7 +75,7 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
     
     func sliderValueChanged(slider: UISlider, event: UIEvent) {
         var pauseTime: CMTime = CMTime.zero
-        guard let player = player else { return }
+        guard let isLiveContent = viewModel.isLiveContent, !isLiveContent, let player = player else { return }
         if let touchEvent = event.allTouches?.first {
             switch touchEvent.phase {
             case .began:
@@ -93,6 +95,14 @@ extension VideoPlayerViewController: PlayerControlsViewDelegate {
                 break
             }
         }
+    }
+    
+    func seekToLive() {
+        guard let livePosition = player?.currentItem?.seekableTimeRanges.last as? CMTimeRange else {
+            return
+        }
+        player?.seek(to:CMTimeRangeGetEnd(livePosition))
+        playerControlsView.updateLiveState(with: true)
     }
 }
 

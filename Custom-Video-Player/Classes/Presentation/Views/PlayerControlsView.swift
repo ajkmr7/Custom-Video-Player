@@ -12,6 +12,7 @@ import SnapKit
     func sliderValueChanged(slider: UISlider, event: UIEvent)
     func switchSubtitles()
     func openSettings()
+    func seekToLive()
 }
 
 // MARK: - Player Controls
@@ -69,15 +70,15 @@ class PlayerControlsView: UIView {
     
     private let seekBar = UISlider().configure { seekBar in
         seekBar.maximumTrackTintColor = VideoPlayerColor(palette: .pearlWhite).uiColor
-        seekBar.minimumTrackTintColor = VideoPlayerColor(palette: .white).uiColor
+        seekBar.minimumTrackTintColor = VideoPlayerColor(palette: .red).uiColor
         seekBar.minimumValue = 0
         seekBar.setThumbImage(nil, for: .normal)
         let thumbSize = CGSize(width: CGFloat.space12, height: CGFloat.space12)
         let thumbImage = UIGraphicsImageRenderer(size: thumbSize).image { _ in
-            VideoPlayerColor(palette: .white).uiColor.setFill()
+            VideoPlayerColor(palette: .red).uiColor.setFill()
             UIBezierPath(ovalIn: CGRect(origin: .zero, size: thumbSize)).fill()
         }
-        seekBar.setThumbImage(thumbImage, for: .highlighted)
+        seekBar.setThumbImage(thumbImage, for: .normal)
     }
     
     private let currentTimeLabel = UILabel().configure {
@@ -90,6 +91,13 @@ class PlayerControlsView: UIView {
         $0.text = "00:00"
         $0.font = FontUtility.helveticaNeueLight(ofSize: 14)
         $0.textColor = VideoPlayerColor(palette: .white).uiColor
+    }
+    
+    private let liveButton = UIButton().configure {
+        $0.backgroundColor = .clear
+        $0.contentEdgeInsets = UIEdgeInsets.zero
+        $0.isHidden = true
+        $0.isEnabled = false
     }
     
     // MARK: - Control State Setters
@@ -253,6 +261,7 @@ extension PlayerControlsView {
         addSubview(seekBar)
         addSubview(currentTimeLabel)
         addSubview(totalTimeLabel)
+        addSubview(liveButton)
         
         titleLabel.snp.makeConstraints { make in
             make.bottom.equalTo(subtitleLabel.snp.top).offset(-CGFloat.space4)
@@ -282,6 +291,32 @@ extension PlayerControlsView {
             make.trailing.equalTo(settingsButton.snp.trailing)
             make.bottom.equalTo(seekBar.snp.top).offset(-CGFloat.space12)
         }
+        
+        liveButton.snp.makeConstraints { make in
+            make.trailing.equalTo(settingsButton.snp.trailing)
+            make.bottom.equalTo(seekBar.snp.top).offset(-CGFloat.space12)
+        }
+        
+        liveButton.setAttributedTitle(getAttributedLiveString(isLive: true), for: .normal)
+    }
+    
+    private func getAttributedLiveString(isLive: Bool) -> NSMutableAttributedString {
+        let dotString = "\u{2022}  "
+        let attributedString = NSMutableAttributedString()
+        let dotAttributes: [NSAttributedString.Key: Any] = [
+            .font: FontUtility.helveticaNeueRegular(ofSize: 20),
+            .foregroundColor: isLive ? VideoPlayerColor(palette: .red).uiColor : VideoPlayerColor(palette: .pearlWhite).uiColor,
+        ]
+
+        let liveString = NSMutableAttributedString(string: dotString + "LIVE")
+
+        let dotRange = NSRange(location: 0,
+                               length: dotString.count)
+        liveString.addAttributes(dotAttributes, range: dotRange)
+
+        attributedString.append(liveString)
+        
+        return attributedString
     }
 }
 
@@ -298,6 +333,7 @@ extension PlayerControlsView {
         backButton.addTarget(self, action: #selector(backButtonTap), for: .touchUpInside)
         subtitleButton.addTarget(self, action: #selector(subtitleButtonTap), for: .touchUpInside)
         settingsButton.addTarget(self, action: #selector(settingsButtonTap), for: .touchUpInside)
+        liveButton.addTarget(self, action: #selector(seekLiveButtonTap), for: .touchUpInside)
     }
     
     @IBAction private func pausePlay(_: UIButton) {
@@ -335,6 +371,10 @@ extension PlayerControlsView {
     @objc private func onSliderValChanged(slider: UISlider, event: UIEvent) {
         delegate?.sliderValueChanged(slider: slider, event: event)
     }
+    
+    @IBAction private func seekLiveButtonTap() {
+        delegate?.seekToLive()
+    }
 }
 
 // MARK: - Player Control State Updation
@@ -347,8 +387,23 @@ extension PlayerControlsView {
     func unhideSettingsButton() {
         settingsButton.isHidden = false
     }
-
+    
     func hideSettingsButton() {
         settingsButton.isHidden = true
+    }
+    
+    func enableLiveControls() {
+        liveButton.isHidden = false
+        settingsButton.isHidden = true
+        subtitleButton.isHidden = true
+        totalTimeLabel.isHidden = true
+        currentTimeLabel.isHidden = true
+        forwardButton.isHidden = true
+        rewindButton.isHidden = true
+    }
+    
+    func updateLiveState(with isLive: Bool) {
+        liveButton.setAttributedTitle(getAttributedLiveString(isLive: isLive), for: .normal)
+        liveButton.isEnabled = !isLive
     }
 }

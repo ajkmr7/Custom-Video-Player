@@ -114,6 +114,20 @@ extension VideoPlayerViewController {
         setupSubtiteSelectionView()
     }
     
+    private func setupLiveControls() {
+        playerControlsView.titleLabelText = viewModel.titleLabelText
+        playerControlsView.subtitleLabelText = viewModel.subtitleLabelText
+        playerControlsView.previousVideoButtonState = viewModel.isPreviousButtonEnabled
+        playerControlsView.nextVideoButtonState = viewModel.isNextButtonEnabled
+        view.addSubview(playerControlsView)
+        playerControlsView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        playerControlsView.delegate = self
+        setupGestureRecognizers()
+        playerControlsView.enableLiveControls()
+    }
+    
     private func setupSubtiteSelectionView() {
         guard let supportedLanguages = player?.supportedSubtitleOptions, !supportedLanguages.isEmpty else {
             playerControlsView.disableSubtitlesButton()
@@ -161,7 +175,10 @@ extension VideoPlayerViewController {
 
 extension VideoPlayerViewController {
     private func addObservers() {
-        playerItem?.addObserver(self, forKeyPath: "status", options: [.new, .initial], context: nil)
+        guard let isLiveContent = viewModel.isLiveContent, !isLiveContent else {
+            playerItem?.addObserver(self, forKeyPath: "status", options: [.new, .initial], context: nil)
+            return
+        }
         player?.currentItem?.addObserver(self, forKeyPath: "duration", options: [.new, .initial], context: nil)
         let interval = CMTime(seconds: 1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         let mainQueue = DispatchQueue.main
@@ -178,7 +195,15 @@ extension VideoPlayerViewController {
         switch keyPath {
         case "duration":
             if let duration = player?.currentItem?.duration, duration.seconds > 0.0, !didSetupControls {
-                handleDuration(duration.seconds)
+                playerControlsView.seekBarMaximumValue = Float(duration.seconds)
+                enableControls()
+                resumePlayer()
+            }
+        case "status":
+            if let isLiveContent = viewModel.isLiveContent, isLiveContent, player?.currentItem?.status == .readyToPlay, !didSetupControls {
+                playerControlsView.seekBarValue = 1
+                playerControlsView.seekBarMaximumValue = 1
+                enableControls()
                 resumePlayer()
             }
         default:
@@ -186,9 +211,12 @@ extension VideoPlayerViewController {
         }
     }
     
-    private func handleDuration(_ duration: Double) {
-        playerControlsView.seekBarMaximumValue = Float(duration)
-        setupControls()
+    private func enableControls() {
+        if let isLiveContent = viewModel.isLiveContent, isLiveContent {
+            setupLiveControls()
+        } else {
+            setupControls()
+        }
         didSetupControls = true
         showControls()
     }
@@ -263,3 +291,4 @@ extension VideoPlayerViewController {
         view.gestureRecognizers?.removeAll()
     }
 }
+

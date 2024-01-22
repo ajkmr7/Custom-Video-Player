@@ -16,6 +16,7 @@ enum VideoPlayerColorPalatte: String, CaseIterable, Equatable, NameableAsset {
     case white
     case pearlWhite
     case black
+    case red
 
     var uiColor: UIColor { UIColor(self) }
 }
