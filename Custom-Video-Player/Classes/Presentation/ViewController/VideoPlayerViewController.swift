@@ -16,7 +16,6 @@ public class VideoPlayerViewController: UIViewController {
     let playerControlsView = PlayerControlsView()
     var subtitleSelectionView: SubtitleSelectionViewController?
     var qualitySelectionView: QualitySelectionViewController?
-    private let notification = NotificationCenter.default
     
     // Custom Subtitle Styling
     private let subtitleStyling = AVTextStyleRule(textMarkupAttributes: [
@@ -24,6 +23,12 @@ public class VideoPlayerViewController: UIViewController {
         kCMTextMarkupAttribute_ForegroundColorARGB as String: [1.0, 1.0, 1.0, 1.0],
         kCMTextMarkupAttribute_FontFamilyName as String: UIFont.preferredFont(forTextStyle: .body).fontName,
     ])
+    
+    private let activityIndicatorView = UIActivityIndicatorView().configure {
+        $0.tintColor = .gray
+        $0.color = .gray
+        $0.hidesWhenStopped = true
+    }
     
     public init(viewModel: VideoPlayerViewModel, coordinator: VideoPlayerCoordinator) {
         self.viewModel = viewModel
@@ -54,7 +59,8 @@ public class VideoPlayerViewController: UIViewController {
         super.viewDidLoad()
         resetOrientation(UIInterfaceOrientationMask.landscapeRight)
         UIViewController.attemptRotationToDeviceOrientation()
-        notification.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        addLoader()
         setupPlayer()
     }
     
@@ -78,13 +84,38 @@ public class VideoPlayerViewController: UIViewController {
         super.viewDidLayoutSubviews()
         playerLayer?.frame = view.bounds
     }
+    
+    deinit {
+        playerItem?.removeObserver(self, forKeyPath: "status")
+        NotificationCenter.default.removeObserver(self,
+                                    name: UIApplication.didEnterBackgroundNotification,
+                                    object: nil)
+        guard let isLiveContent = viewModel.isLiveContent, !isLiveContent else { return }
+        if let periodicTimeObserver = periodicTimeObserver {
+            player?.removeTimeObserver(periodicTimeObserver)
+        }
+        periodicTimeObserver = nil
+        player?.currentItem?.removeObserver(self, forKeyPath: "duration")
+        player?.cancelPendingPrerolls()
+        player?.replaceCurrentItem(with: nil)
+        invalidateControlsHiddenTimer()
+    }
 }
 
 // MARK: - Video Player Setup
 
 extension VideoPlayerViewController {
+    private func addLoader() {
+        view.addSubview(activityIndicatorView)
+        activityIndicatorView.snp.makeConstraints { make in
+            make.centerY.equalTo(view.snp.centerY)
+            make.centerX.equalTo(view.snp.centerX)
+        }
+    }
+
     private func setupPlayer() {
         guard let videoURL = viewModel.url else { return }
+        activityIndicatorView.startAnimating()
         playerItem = AVPlayerItem(url: videoURL)
         if let subtitleStyling = subtitleStyling {
             playerItem?.textStyleRules = [subtitleStyling]
@@ -175,10 +206,8 @@ extension VideoPlayerViewController {
 
 extension VideoPlayerViewController {
     private func addObservers() {
-        guard let isLiveContent = viewModel.isLiveContent, !isLiveContent else {
-            playerItem?.addObserver(self, forKeyPath: "status", options: [.new, .initial], context: nil)
-            return
-        }
+        playerItem?.addObserver(self, forKeyPath: "status", options: [.new, .initial], context: nil)
+        guard let isLiveContent = viewModel.isLiveContent, !isLiveContent else { return }
         player?.currentItem?.addObserver(self, forKeyPath: "duration", options: [.new, .initial], context: nil)
         let interval = CMTime(seconds: 1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         let mainQueue = DispatchQueue.main
@@ -195,16 +224,26 @@ extension VideoPlayerViewController {
         switch keyPath {
         case "duration":
             if let duration = player?.currentItem?.duration, duration.seconds > 0.0, !didSetupControls {
+                activityIndicatorView.stopAnimating()
                 playerControlsView.seekBarMaximumValue = Float(duration.seconds)
                 enableControls()
                 resumePlayer()
             }
         case "status":
-            if let isLiveContent = viewModel.isLiveContent, isLiveContent, player?.currentItem?.status == .readyToPlay, !didSetupControls {
-                playerControlsView.seekBarValue = 1
-                playerControlsView.seekBarMaximumValue = 1
-                enableControls()
-                resumePlayer()
+            switch player?.currentItem?.status {
+            case .readyToPlay:
+                if let isLiveContent = viewModel.isLiveContent, isLiveContent, !didSetupControls {
+                    activityIndicatorView.stopAnimating()
+                    playerControlsView.seekBarValue = 1
+                    playerControlsView.seekBarMaximumValue = 1
+                    enableControls()
+                    resumePlayer()
+                }
+            case .failed:
+                activityIndicatorView.stopAnimating()
+                handlePlayerError(player?.currentItem?.error)
+            default:
+                break
             }
         default:
             break
@@ -277,7 +316,7 @@ extension VideoPlayerViewController {
         resumePlayer()
     }
     
-    private func resetPlayerItems() {
+    func resetPlayerItems() {
         hideControls()
         didSetupControls = false
         disableGestureRecognizers()
