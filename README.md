@@ -1,12 +1,15 @@
 # Custom Video Player
 
-A video player with custom playback controls, subtitle selection, and video quality selection support for iOS as of now.
+A video player with custom playback controls, the ability to select subtitles and video quality, stream live content, as well as handle errors.
 
 ## Features
 
-- Subtitle selection mechanism.
-- Quality settings for video streams.
-- Plans to implement various video player features in the future.
+- Custom Playback Controls
+- Video Playlist
+- Subtitle Selection
+- Video Quality Selection
+- Live Stream
+- Error Handling
 
 ## Getting Started
 
