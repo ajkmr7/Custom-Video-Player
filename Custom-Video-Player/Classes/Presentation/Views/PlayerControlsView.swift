@@ -303,6 +303,7 @@ extension PlayerControlsView {
     private func getAttributedLiveString(isLive: Bool) -> NSMutableAttributedString {
         let dotString = "\u{2022}  "
         let attributedString = NSMutableAttributedString()
+        
         let dotAttributes: [NSAttributedString.Key: Any] = [
             .font: FontUtility.helveticaNeueRegular(ofSize: 20),
             .foregroundColor: isLive ? VideoPlayerColor(palette: .red).uiColor : VideoPlayerColor(palette: .pearlWhite).uiColor,
@@ -310,10 +311,15 @@ extension PlayerControlsView {
 
         let liveString = NSMutableAttributedString(string: dotString + "LIVE")
 
-        let dotRange = NSRange(location: 0,
-                               length: dotString.count)
-        liveString.addAttributes(dotAttributes, range: dotRange)
+        let liveAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor:VideoPlayerColor(palette: .white).uiColor,
+        ]
 
+        liveString.addAttributes(liveAttributes, range: NSRange(location: dotString.count, length: "LIVE".count))
+
+        let dotRange = NSRange(location: 0, length: dotString.count)
+        liveString.addAttributes(dotAttributes, range: dotRange)
+        
         attributedString.append(liveString)
         
         return attributedString

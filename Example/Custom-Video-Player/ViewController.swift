@@ -38,16 +38,6 @@ class ViewController: UIViewController {
                     isLiveContent: true
                 ),
                 Video(
-                    url: "https://prod-sports-north-gm.jiocinema.com/bpk-tv/Colors_Tamil_HD_voot_MOB/Fallback/Colors_Tamil_HD_voot_MOB-audio_98835_tam=98800-video=560800.m3u8",
-                    title: "Colors Tamil",
-                    isLiveContent: true
-                ),
-                Video(
-                    url: "https://prod-sports-north-gm.jiocinema.com/bpk-tv/Nick_Junior_voot_MOB/Fallback/Nick_Junior_voot_MOB-audio_98836_eng=98800-video=699600.m3u8",
-                    title: "Nick Jr.",
-                    isLiveContent: true
-                ),
-                Video(
                     url: "https://segment.yuppcdn.net/050522/murasu/050522/murasu_1200/chunks.m3u8",
                     title: "Murasu",
                     isLiveContent: true
