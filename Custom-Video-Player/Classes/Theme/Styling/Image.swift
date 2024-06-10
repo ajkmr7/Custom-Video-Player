@@ -1,3 +1,6 @@
+import UIKit
+
+/// An enum representing images used in the video player.
 enum VideoPlayerImage: String, CaseIterable, NameableAsset {
     case backButton = "back_button"
     case forwardButton = "forward_button"
@@ -11,5 +14,6 @@ enum VideoPlayerImage: String, CaseIterable, NameableAsset {
     case previousVideoButton = "previousvideo_button"
     case nextVideoButton = "nextvideo_button"
 
+    /// Returns the UIImage representation of the image with the specified name.
     var uiImage: UIImage { UIImage(self, resourceBundle: CustomVideoPlayer.resourceBundle) }
 }

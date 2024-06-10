@@ -1,10 +1,12 @@
 import AVFoundation
 import AVKit
 
+/// Extension to CMTime providing additional functionality for formatting duration text.
 extension CMTime {
     
-    /// Returns duration in ` h:mm:ss` format  for hour-long video else returns duration in `mm:ss` format
-    
+    /// Returns the duration in `h:mm:ss` format for hour-long videos or `mm:ss` format for shorter videos.
+    ///
+    /// - Returns: A string representing the formatted duration.
     var durationText: String {
         let totalSeconds = CMTimeGetSeconds(self)
         let hours = Int(totalSeconds.truncatingRemainder(dividingBy: 86400) / 3600)

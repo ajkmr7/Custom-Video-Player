@@ -2,6 +2,8 @@ import SnapKit
 import UIKit
 
 class SelectionCellView: UITableViewCell {
+    // MARK: - View Components
+    
     private let subtitleLanguage = UILabel().configure {
         $0.textColor = VideoPlayerColor(palette: .white).uiColor
         $0.font = FontUtility.helveticaNeueRegular(ofSize: 12)
@@ -13,6 +15,8 @@ class SelectionCellView: UITableViewCell {
         $0.font = FontUtility.helveticaNeueRegular(ofSize: 24)
     }
     
+    // MARK: - Initialization
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
@@ -23,6 +27,9 @@ class SelectionCellView: UITableViewCell {
         setupView()
     }
     
+    // MARK: - View Setup
+    
+    /// Sets up the appearance and layout of the cell's subviews.
     private func setupView() {
         backgroundColor = VideoPlayerColor(palette: .black).uiColor
         contentView.addSubview(subtitleLanguage)
@@ -39,6 +46,13 @@ class SelectionCellView: UITableViewCell {
         }
     }
     
+    // MARK: - Cell Configuration
+    
+    /// Configures the cell with the provided title and selection status.
+    ///
+    /// - Parameters:
+    ///   - title: The title to be displayed in the cell.
+    ///   - isSelected: A Boolean value indicating whether the cell is selected.
     func configureCell(title: String, isSelected: Bool) {
         subtitleLanguage.text = title
         checkMark.isHidden = !isSelected

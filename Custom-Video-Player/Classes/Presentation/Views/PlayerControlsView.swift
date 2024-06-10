@@ -2,6 +2,7 @@ import MediaPlayer
 import UIKit
 import SnapKit
 
+/// Delegate protocol for handling player control actions.
 @objc protocol PlayerControlsViewDelegate {
     func seekForward()
     func seekBackward()
@@ -15,8 +16,7 @@ import SnapKit
     func seekToLive()
 }
 
-// MARK: - Player Controls
-
+/// Custom view for player controls.
 class PlayerControlsView: UIView {
     weak var delegate: PlayerControlsViewDelegate?
     
@@ -189,7 +189,7 @@ class PlayerControlsView: UIView {
         }
     }
     
-    private let dynamicSpacing: CGFloat = UIScreen.main.bounds.height * 0.055
+        private let dynamicSpacing: CGFloat = UIScreen.main.bounds.height * 0.055
     
     init() {
         super.init(frame: .zero)
@@ -207,10 +207,12 @@ class PlayerControlsView: UIView {
 
 extension PlayerControlsView {
     private func setupViews() {
+        // Setting up controls on top
         addSubview(backButton)
         addSubview(subtitleButton)
         addSubview(settingsButton)
         
+        // Setting constraints for controls on top
         backButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(CGFloat.space24)
             make.leading.equalToSuperview().offset(dynamicSpacing)
@@ -226,12 +228,14 @@ extension PlayerControlsView {
             make.trailing.equalToSuperview().offset(-dynamicSpacing)
         }
         
+        // Setting up controls in the middle
         addSubview(previousVideoButton)
         addSubview(rewindButton)
         addSubview(playPauseButton)
         addSubview(forwardButton)
         addSubview(nextVideoButton)
         
+        // Setting constraints for controls in the middle
         previousVideoButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalTo(rewindButton.snp.leading).offset(-CGFloat.space16)
@@ -256,6 +260,7 @@ extension PlayerControlsView {
             make.leading.equalTo(forwardButton.snp.trailing).offset(CGFloat.space16)
         }
         
+        // Setting up controls at the bottom
         addSubview(titleLabel)
         addSubview(subtitleLabel)
         addSubview(seekBar)
@@ -263,6 +268,7 @@ extension PlayerControlsView {
         addSubview(totalTimeLabel)
         addSubview(liveButton)
         
+        // Setting constraints for controls at the bottom
         titleLabel.snp.makeConstraints { make in
             make.bottom.equalTo(subtitleLabel.snp.top).offset(-CGFloat.space4)
             make.leading.equalTo(seekBar.snp.leading)
@@ -330,9 +336,9 @@ extension PlayerControlsView {
 
 extension PlayerControlsView {
     private func setUpEvents() {
+        // Adding targets for control events
         playPauseButton.addTarget(self, action: #selector(pausePlay), for: .touchUpInside)
         forwardButton.addTarget(self, action: #selector(doForwardJump), for: .touchUpInside)
-        rewindButton.addTarget(self, action: #selector(doBackwardJump), for: .touchUpInside)
         previousVideoButton.addTarget(self, action: #selector(playPreviousVideo), for: .touchUpInside)
         nextVideoButton.addTarget(self, action: #selector(playNextVideo), for: .touchUpInside)
         seekBar.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
@@ -341,6 +347,8 @@ extension PlayerControlsView {
         settingsButton.addTarget(self, action: #selector(settingsButtonTap), for: .touchUpInside)
         liveButton.addTarget(self, action: #selector(seekLiveButtonTap), for: .touchUpInside)
     }
+    
+    // MARK: - Control Event Handlers
     
     @IBAction private func pausePlay(_: UIButton) {
         delegate?.togglePlayPause()

@@ -1,6 +1,8 @@
 import Foundation
 
+/// Extension to CGFloat providing predefined spacing values.
 extension CGFloat {
+    // Predefined spacing values
     static let space1: CGFloat = 1
     static let space2: CGFloat = 2
     static let space4: CGFloat = 4

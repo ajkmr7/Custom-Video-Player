@@ -2,11 +2,18 @@ import AVFoundation
 import SnapKit
 import UIKit
 
+/// A protocol for handling quality selection events.
 protocol QualitySelectionDelegate: AnyObject {
+    /// Notifies the delegate when a quality setting is selected.
+    ///
+    /// - Parameter index: The index of the selected quality setting.
     func onQualitySettingSelected(didSelectRowAt index: Int)
+    
+    /// Notifies the delegate when the selection view is dismissed.
     func onDismissed()
 }
 
+/// A view controller for selecting video quality settings.
 class QualitySelectionViewController: UIViewController {
     private static let cellIdentifier = "QualityCell"
     
@@ -30,14 +37,6 @@ class QualitySelectionViewController: UIViewController {
         $0.textColor = VideoPlayerColor(palette: .pearlWhite).uiColor
         $0.text = "Qualities"
         $0.font = FontUtility.helveticaNeueMedium(ofSize: 16)
-    }
-    
-    override var shouldAutorotate: Bool {
-        return true
-    }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .landscape
     }
     
     weak var delegate: QualitySelectionDelegate?
@@ -127,6 +126,8 @@ class QualitySelectionViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource, UITableViewDelegate
+
 extension QualitySelectionViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return viewModel.supportedResolutions.count
@@ -148,7 +149,7 @@ extension QualitySelectionViewController: UITableViewDataSource, UITableViewDele
         dismissView()
     }
 
-    func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
+    func tableView(_: UITableView, heightForRowAt _:IndexPath) -> CGFloat {
         return CGFloat.space38
     }
 }
