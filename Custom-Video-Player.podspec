@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Custom-Video-Player'
-  s.version          = '0.1.0'
+  s.version          = '1.0.0'
   s.summary          = 'A video player with custom playback controls, the ability to select subtitles and video quality, stream live content, as well as handle errors.'
 
 
