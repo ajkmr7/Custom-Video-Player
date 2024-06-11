@@ -18,7 +18,7 @@ To use this custom video player in your iOS project, follow these steps:
 1. Clone this repository.
 
    ```bash
-   git clone https://github.com/yourusername/Custom-Video-Player.git
+   git clone git@github.com:ajkmr7/Custom-Video-Player.git
    ```
 
 2. Navigate to the Example directory and install the necessary pods.
