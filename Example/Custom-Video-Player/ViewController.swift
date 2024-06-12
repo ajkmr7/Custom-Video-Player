@@ -33,9 +33,9 @@ class ViewController: UIViewController {
             title: "IPTV",
             videos: [
                 Video(
-                    url: "https://ndtvindiaelemarchana.akamaized.net/hls/live/2003679/ndtvindia/master.m3u8",
-                    title: "NDTV",
-                    isLiveContent: true
+                    url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+                    title: "Video",
+                    isLiveContent: false
                 ),
                 Video(
                     url: "https://segment.yuppcdn.net/050522/murasu/050522/murasu_1200/chunks.m3u8",
