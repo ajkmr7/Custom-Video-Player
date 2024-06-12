@@ -1,6 +1,10 @@
 # Custom Video Player
 
-A video player with custom playback controls, the ability to select subtitles and video quality, stream live content, and handle errors.
+A feature-rich video player with custom playback controls, subtitle and video quality selection, live streaming, and robust error handling.
+
+<center>
+<img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/1*GAx2shPD5ZQyfiQtk2GNWQ.png" width="75%"/>
+</center>
 
 ## Features
 
@@ -11,20 +15,88 @@ A video player with custom playback controls, the ability to select subtitles an
 - **Live Stream Support**
 - **Error Handling**
 
-## Getting Started
+## Requirements
 
-To use this custom video player in your iOS project, follow these steps:
+- iOS 11.0 or later
+
+## Usage
+
+To integrate the Custom Video Player pod into your own project, follow these steps:
+
+1. Add the pod to your Podfile/Podspec based on your requirement
+
+   **Podfile:**
+
+   ```ruby
+   pod 'Custom-Video-Player', :git => 'https://github.com/ajkmr7/Custom-Video-Player.git', :tag => '1.0.0'
+   ```
+
+   **Podspec:**
+
+   ```ruby
+   s.dependency 'Custom-Video-Player', :git => 'https://github.com/ajkmr7/Custom-Video-Player.git', :tag => '1.0.0'
+   ```
+
+2. Install the pod.
+
+   ```bash
+   pod install
+   ```
+
+3. Import the Custom Video Player in your project file where you intend to use it.
+
+   ```swift
+   import Custom_Video_Player
+   ```
+
+4. Initialize and configure the player with a video playlist. The playlist should have a _title_ and a list of _videos_, with each video having its own _title, URL, and isLiveContent_ attribute.
+
+   ```swift
+   let playlist = VideoPlaylist(
+      title: "IPTV",
+      videos: [
+         Video(
+               url: "https://ndtvindiaelemarchana.akamaized.net/hls/live/2003679/ndtvindia/master.m3u8",
+               title: "NDTV",
+               isLiveContent: true
+         ),
+         Video(
+               url: "https://segment.yuppcdn.net/050522/murasu/050522/murasu_1200/chunks.m3u8",
+               title: "Murasu",
+               isLiveContent: true
+         ),
+         Video(
+               url: "https://ndtv24x7elemarchana.akamaized.net/hls/live/2003678/ndtv24x7/masterp_480p@1.m3u8",
+               title: "NDTV.com",
+               isLiveContent: true
+         ),
+      ]
+   )
+   let config = VideoPlayerConfig(playlist: playlist)
+   ```
+
+5. Initialize the _VideoPlayerCoordinator_ with your base UINavigationController and invoke the player with the configuration.
+
+   ```swift
+   let coordinator = VideoPlayerCoordinator(navigationController: navigationController)
+   coordinator.invoke(videoPlayerConfig: config)
+
+   ```
+
+## Sample App
+
+To see a working implementation of the Custom Video Player, you can use the Example app provided in the repository. Follow these steps to set it up:
 
 1. Clone this repository.
 
    ```bash
-   git clone https://github.com/yourusername/Custom-Video-Player.git
+   git clone https://github.com/ajkmr7/Custom-Video-Player.git
    ```
 
-2. Navigate to the Example directory and install the necessary pods.
+2. Navigate to the `Example` directory and install the necessary pods.
 
    ```bash
-   cd Example
+   cd Custom-Video-Player/Example
    pod install
    ```
 
@@ -39,6 +111,10 @@ To use this custom video player in your iOS project, follow these steps:
 ## Sample Use Case: Watch Party
 
 We have a branch with a sample use case demonstrating how to implement a Watch Party feature. Check out the `watch-party` branch to see this in action.
+
+<center>
+<img src="https://miro.medium.com/v2/resize:fit:1000/format:webp/1*p-2rYucmrxubb5XfuAVqfA.png" width="75%"/>
+</center>
 
 ## Articles for Further Implementation
 
