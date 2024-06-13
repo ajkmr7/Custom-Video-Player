@@ -19,37 +19,49 @@ A feature-rich video player with custom playback controls, subtitle and video qu
 
 - iOS 11.0 or later
 
+## Installation
+
+### CocoaPods
+
+[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
+
+```bash
+$ gem install cocoapods
+```
+
+To integrate Custom Video Player into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '11.0'
+use_frameworks!
+
+target '<Your Target Name>' do
+   pod 'Custom-Video-Player', :git => 'https://github.com/ajkmr7/Custom-Video-Player.git', :tag => '1.0.0'
+end
+```
+
+Then, run the following command:
+
+```bash
+$ pod install
+```
+
+### Swift Package Manager
+
+[Swift Package Manager](https://swift.org/package-manager/) is a tool for managing the distribution of Swift code. It’s integrated with the Swift build system to automate the process of downloading, compiling, and linking dependencies.
+
+To integrate Custom Video Player into your Xcode project using Swift Package Manager, add it to the dependencies value of your `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ajkmr7/Custom-Video-Player.git")
+]
+```
+
 ## Usage
 
-To integrate the Custom Video Player pod into your own project, follow these steps:
-
-1. Add the pod to your Podfile/Podspec based on your requirement
-
-   **Podfile:**
-
-   ```ruby
-   pod 'Custom-Video-Player', :git => 'https://github.com/ajkmr7/Custom-Video-Player.git', :tag => '1.0.0'
-   ```
-
-   **Podspec:**
-
-   ```ruby
-   s.dependency 'Custom-Video-Player', :git => 'https://github.com/ajkmr7/Custom-Video-Player.git', :tag => '1.0.0'
-   ```
-
-2. Install the pod.
-
-   ```bash
-   pod install
-   ```
-
-3. Import the Custom Video Player in your project file where you intend to use it.
-
-   ```swift
-   import Custom_Video_Player
-   ```
-
-4. Initialize and configure the player with a video playlist. The playlist should have a _title_ and a list of _videos_, with each video having its own _title, URL, and isLiveContent_ attribute.
+Initialize and configure the player with a video playlist. The playlist should have a _title_ and a list of _videos_, with each video having its own _title, URL, and isLiveContent_ attribute.
 
    ```swift
    let playlist = VideoPlaylist(
@@ -75,7 +87,7 @@ To integrate the Custom Video Player pod into your own project, follow these ste
    let config = VideoPlayerConfig(playlist: playlist)
    ```
 
-5. Initialize the _VideoPlayerCoordinator_ with your base UINavigationController and invoke the player with the configuration.
+Initialize the _VideoPlayerCoordinator_ with your base UINavigationController and invoke the player with the configuration.
 
    ```swift
    let coordinator = VideoPlayerCoordinator(navigationController: navigationController)

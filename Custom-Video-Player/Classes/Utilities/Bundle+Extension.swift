@@ -5,6 +5,11 @@ final class CustomVideoPlayer {
     
     /// The bundle containing the resources for the custom video player.
     static let resourceBundle: Bundle = {
+        #if SWIFT_PACKAGE
+        // When using Swift Package Manager, use the module bundle.
+        return Bundle.module
+        #endif
+        // When using Cocoapods, locate the resource bundle manually.
         let myBundle = Bundle(for: CustomVideoPlayer.self)
 
         // Ensure the URL for the resource bundle is found.
