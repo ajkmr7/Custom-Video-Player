@@ -1,6 +1,6 @@
 import UIKit
 import SnapKit
-import Custom_Video_Player
+import CustomVideoPlayer
 
 class ViewController: UIViewController {
     

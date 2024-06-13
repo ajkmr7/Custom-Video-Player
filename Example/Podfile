@@ -3,7 +3,7 @@ use_frameworks!
 platform :ios, '11.0'
 
 target 'Custom-Video-Player_Example' do
-  pod 'Custom-Video-Player', :path => '../'
+  pod 'CustomVideoPlayer', :path => '../'
 
   target 'Custom-Video-Player_Tests' do
     inherit! :search_paths

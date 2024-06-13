@@ -37,7 +37,7 @@ platform :ios, '11.0'
 use_frameworks!
 
 target '<Your Target Name>' do
-   pod 'Custom-Video-Player', :git => 'https://github.com/ajkmr7/Custom-Video-Player.git', :tag => '1.0.0'
+   pod 'CustomVideoPlayer', :git => 'https://github.com/ajkmr7/Custom-Video-Player.git', :tag => '1.1.0'
 end
 ```
 
@@ -55,7 +55,7 @@ To integrate Custom Video Player into your Xcode project using Swift Package Man
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ajkmr7/Custom-Video-Player.git")
+    .package(url: "https://github.com/ajkmr7/Custom-Video-Player.git", from: "1.1.0")
 ]
 ```
 
