@@ -313,12 +313,12 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Custom-Video-Player_Example/Pods-Custom-Video-Player_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Custom-Video-Player/Custom_Video_Player.framework",
+				"${BUILT_PRODUCTS_DIR}/CustomVideoPlayer/CustomVideoPlayer.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Custom_Video_Player.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CustomVideoPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

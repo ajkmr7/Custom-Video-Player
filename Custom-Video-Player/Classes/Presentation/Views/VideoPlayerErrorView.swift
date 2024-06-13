@@ -1,4 +1,5 @@
 import SnapKit
+import UIKit
 
 class VideoPlayerErrorView: UIView {
     // MARK: - View Components

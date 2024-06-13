@@ -17,6 +17,9 @@ DerivedData/
 Pods/
 *.xcworkspace/contents.xcworkspacedata
 *.xccheckout
+Packages/
+Package.pins
+Package.resolved
 
 # Sensitive data
 *.xcconfig
