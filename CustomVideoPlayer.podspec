@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
-  s.name             = 'Custom-Video-Player'
-  s.version          = '0.0.1'
-  s.summary          = 'A custom video player with subtitle selection support for iOS as of now.'
+  s.name             = 'CustomVideoPlayer'
+  s.version          = '1.1.0'
+  s.summary          = 'A video player with custom playback controls, the ability to select subtitles and video quality, stream live content, as well as handle errors.'
 
 
   s.homepage         = 'https://github.com/ajkmr7/Custom-Video-Player'
@@ -17,7 +17,6 @@ Pod::Spec.new do |s|
   s.dependency 'Firebase/Database'
   
    s.resource_bundles = {
-    'Custom-Video-Player' => ['Custom-Video-Player/Assets/**']
+    'ResourcesBundle' => ['Custom-Video-Player/Assets/**']
   }
-  s.resources = ['Custom-Video-Player/Assets/**']
 end

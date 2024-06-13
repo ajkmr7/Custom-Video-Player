@@ -1,5 +1,5 @@
 import FirebaseDatabase
-import Custom_Video_Player
+import CustomVideoPlayer
 
 class ViewModel {
     var ref: DatabaseReference

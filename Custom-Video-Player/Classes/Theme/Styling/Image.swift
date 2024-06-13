@@ -1,3 +1,5 @@
+import UIKit
+
 enum VideoPlayerImage: String, CaseIterable, NameableAsset {
     case backButton = "back_button"
     case forwardButton = "forward_button"

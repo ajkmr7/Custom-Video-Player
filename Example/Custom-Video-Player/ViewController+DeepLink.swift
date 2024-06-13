@@ -1,6 +1,6 @@
 import UIKit
 import SnapKit
-import Custom_Video_Player
+import CustomVideoPlayer
 
 enum Deeplink: String {
     case play /// custom-video-player://video/play?id=<video_id>

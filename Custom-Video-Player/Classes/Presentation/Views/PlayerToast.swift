@@ -1,5 +1,6 @@
 import Foundation
 import SnapKit
+import UIKit
 
 public enum ToastStyle {
     case success
